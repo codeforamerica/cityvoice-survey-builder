@@ -19,6 +19,13 @@ class CityvoiceBuilderHeroku < Sinatra::Base
         code: params[:code], \
         client_secret: ENV['HEROKU_OAUTH_SECRET'] \
       })
-    erb :token_response
+    @app_build_response = HTTParty.post("https://api.heroku.com/app-setups", \
+      query: { source_blob: { url: "https://github.com/daguar/cityvoice/tarball/add-heroku-app-json-file" } }, \
+      headers: { \
+        "Authorization" => "Bearer #{@token_exchange_response["access_token"]}", \
+        "Accept" => "application/vnd.heroku+json; version=3", \
+        "Content-Type" => "application/json" \
+      })
+    erb :response
   end
 end
