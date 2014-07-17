@@ -5,6 +5,7 @@
 Set your OAuth ID (from Heroku):
 
     $ heroku config:set HEROKU_OAUTH_ID=lolmyoauthid
+    $ heroku config:set HEROKU_OAUTH_SECRET=lolmysecret
 
 Push:
 
