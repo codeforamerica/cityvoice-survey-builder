@@ -1,5 +1,6 @@
 require 'sinatra'
 require 'httparty'
+require 'json'
 
 class CityvoiceBuilderHeroku < Sinatra::Base
   get '/' do
@@ -20,12 +21,12 @@ class CityvoiceBuilderHeroku < Sinatra::Base
         client_secret: ENV['HEROKU_OAUTH_SECRET'] \
       })
     @app_build_response = HTTParty.post("https://api.heroku.com/app-setups", \
-      query: { source_blob: { url: "https://github.com/daguar/cityvoice/tarball/add-heroku-app-json-file" } }, \
       headers: { \
         "Authorization" => "Bearer #{@token_exchange_response["access_token"]}", \
         "Accept" => "application/vnd.heroku+json; version=3", \
         "Content-Type" => "application/json" \
-      })
+      }, \
+      body: "{\"source_blob\": { \"url\": \"https://github.com/daguar/cityvoice/tarball/add-heroku-app-json-file\"}}")
     erb :response
   end
 end
