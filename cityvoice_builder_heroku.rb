@@ -1,4 +1,5 @@
 require 'sinatra'
+require 'httparty'
 
 class CityvoiceBuilderHeroku < Sinatra::Base
   get '/' do
@@ -12,7 +13,12 @@ class CityvoiceBuilderHeroku < Sinatra::Base
   end
 
   get '/callback' do
-    puts params
-    erb :show_params
+    @token_exchange_response = HTTParty.post("https://id.heroku.com/oauth/token", \
+      query: { \
+        grant_type: "authorization_code", \
+        code: params[:code], \
+        client_secret: ENV['HEROKU_OAUTH_SECRET'] \
+      })
+    erb :token_response
   end
 end
