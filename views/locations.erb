@@ -64,7 +64,10 @@
 
 
 <body>
-<h2>Add locations</h2>
+  <h2>Add locations</h2>
+  <div id="locations-top-text">
+    Enter an address and click the button to add a location. You can change the display name for the location afterward.
+  </div>
   <div id="panel">
     <input id="address" type="textbox" value="155 Ninth Street, SF, CA">
     <input type="button" value="Add a location" onclick="geocodeAddress()">
@@ -72,8 +75,8 @@
   <div id="map-canvas"></div>
   <div id="locations">
     <h3>Locations</h3>
-    <div id="locations-text">
-      You can edit the text in the box to change the name of the location as it will appear in CityVoice.
+    <div id="locations-list-text">
+      To change a location name, edit the text in the address box below.
     </div>
     <form name="locations" action="locations" method="post">
       <div id="locations-form-inputs">
