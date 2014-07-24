@@ -13,6 +13,15 @@ class CityvoiceBuilderHeroku < Sinatra::Base
     erb :index
   end
 
+  get '/locations' do
+    erb :locations
+  end
+
+  post '/locations' do
+    puts params
+    erb :index
+  end
+
   get '/callback' do
     @token_exchange_response = HTTParty.post("https://id.heroku.com/oauth/token", \
       query: { \

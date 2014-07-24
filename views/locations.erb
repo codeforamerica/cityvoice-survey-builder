@@ -1,0 +1,88 @@
+<head>
+  <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+  <meta charset="utf-8">
+  <title>Geocoding service</title>
+  <style>
+    #map-canvas {
+      height: 400px;
+      width: 600px;
+      margin: 0px;
+      padding: 0px
+    }
+    #panel {
+      position: absolute;
+      top: 5px;
+      left: 50%;
+      margin-left: -180px;
+      z-index: 5;
+      background-color: #fff;
+      padding: 5px;
+      border: 1px solid #999;
+    }
+  </style>
+  <script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
+  <script>
+    var geocoder;
+    var map;
+    var locations = [];
+
+    function initialize() {
+      geocoder = new google.maps.Geocoder();
+      var latlng = new google.maps.LatLng(37.775641, -122.413649);
+      var mapOptions = {
+        zoom: 12,
+        center: latlng
+      }
+      map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+    }
+
+    function codeAddress() {
+      var address = document.getElementById('address').value;
+      geocoder.geocode( { 'address': address}, function(results, status) {
+        if (status == google.maps.GeocoderStatus.OK) {
+          map.setCenter(results[0].geometry.location);
+          locations.push(results[0].formatted_address);
+          refreshLocations();
+          var marker = new google.maps.Marker({
+              map: map,
+              position: results[0].geometry.location
+          });
+        } else {
+          alert('Geocode was not successful for the following reason: ' + status);
+        }
+      });
+    }
+
+    function refreshLocations() {
+      locationsDiv = document.getElementById('locations-form-container');
+      newLocationFormHtmlContent = '<form name="locations" action="locations" method="post">';
+      locations.forEach(function(location, index) {
+        indexStartingAtOne = index + 1;
+        newLocationFormHtmlContent += indexStartingAtOne + '. <input type="text" name="location' + indexStartingAtOne + '" value="' + location + '"><br>';
+      });
+      newLocationFormHtmlContent += '<input type="submit" value="Submit">';
+      locationsDiv.innerHTML = newLocationFormHtmlContent;
+    }
+
+    google.maps.event.addDomListener(window, 'load', initialize);
+  </script>
+</head>
+
+
+<body>
+<h2>Add locations</h2>
+  <div id="panel">
+    <input id="address" type="textbox" value="155 Ninth Street, SF, CA">
+    <input type="button" value="Add a location" onclick="codeAddress()">
+  </div>
+  <div id="map-canvas"></div>
+  <div id="locations">
+    <h3>Locations</h3>
+    <div id="locations-form-container">
+    </div>
+  </div>
+</body>
+
+
+
+
