@@ -1,0 +1,89 @@
+<head>
+  <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+  <meta charset="utf-8">
+  <title>Geocoding service</title>
+  <style>
+    #map-canvas {
+      height: 400px;
+      width: 600px;
+    }
+    #panel {
+      padding-bottom: 10px;
+    }
+  </style>
+  <script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
+  <script>
+    var geocoder;
+    var map;
+
+    function initializeMap() {
+      geocoder = new google.maps.Geocoder();
+      var latlng = new google.maps.LatLng(37.775641, -122.413649);
+      var mapOptions = {
+        zoom: 12,
+        center: latlng
+      }
+      map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+    }
+
+    function geocodeAddress() {
+      var address = document.getElementById('address').value;
+      geocoder.geocode( { 'address': address}, function(results, status) {
+        if (status == google.maps.GeocoderStatus.OK) {
+          topResult = results[0];
+          map.setCenter(topResult.geometry.location);
+          addLocation(topResult);
+          var marker = new google.maps.Marker({
+              map: map,
+              position: topResult.geometry.location
+          });
+        } else {
+          alert('Geocode was not successful for the following reason: ' + status);
+        }
+      });
+    }
+
+    function addLocation(location) {
+      locationsFormInputsDiv = document.getElementById('locations-form-inputs');
+      currentLocationCount = document.getElementsByClassName("location-input-set").length;
+      indexForNewLocation = currentLocationCount + 1;
+      newLocationFormHtmlContent = '<div class="location-input-set">';
+      lat = location.geometry.location.k;
+      lng = location.geometry.location.B;
+      locationNameInput = indexForNewLocation + '. <input type="text" name="locationname_' + indexForNewLocation + '" value="' + location.formatted_address + '">';
+      latLngText = '(' + lat + ',' + lng + ')';
+      latInput = '<input name="lat_' + indexForNewLocation + '" type="hidden" value="' + lat +'">';
+      lngInput = '<input name="lng_' + indexForNewLocation + '" type="hidden" value="' + lng +'">';
+      newLocationFormHtmlContent += locationNameInput + ' ' + latLngText + latInput + lngInput + '<br>' + '</div>';
+      locationsFormInputsDiv.innerHTML += newLocationFormHtmlContent;
+    }
+
+    google.maps.event.addDomListener(window, 'load', initializeMap);
+  </script>
+</head>
+
+
+<body>
+  <h2>Add locations</h2>
+  <div id="locations-top-text">
+    Enter an address and click the button to add a location. You can change the display name for the location afterward.
+  </div>
+  <div id="panel">
+    <input id="address" type="textbox" value="155 Ninth Street, SF, CA">
+    <input type="button" value="Add a location" onclick="geocodeAddress()">
+  </div>
+  <div id="map-canvas"></div>
+  <div id="locations">
+    <h3>Locations</h3>
+    <div id="locations-list-text">
+      To change a location name, edit the text in the address box below.
+    </div>
+    <form name="locations" action="locations" method="post">
+      <div id="locations-form-inputs">
+      </div>
+      <input type="submit" value="Submit locations">
+    </form>
+  </div>
+</body>
+
+
