@@ -3,7 +3,7 @@ require 'httparty'
 require 'json'
 
 class CityvoiceBuilderHeroku < Sinatra::Base
-  get '/' do
+  get '/create-app' do
     raise "Need to set HEROKU_OAUTH_ID" unless ENV.has_key?('HEROKU_OAUTH_ID')
     @heroku_authorize_url = "https://id.heroku.com/oauth/authorize?" \
       + "client_id=#{ENV['HEROKU_OAUTH_ID']}" \
