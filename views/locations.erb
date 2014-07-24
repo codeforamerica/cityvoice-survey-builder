@@ -41,7 +41,7 @@
       geocoder.geocode( { 'address': address}, function(results, status) {
         if (status == google.maps.GeocoderStatus.OK) {
           map.setCenter(results[0].geometry.location);
-          locations.push(results[0].formatted_address);
+          locations.push(results[0]);
           refreshLocations();
           var marker = new google.maps.Marker({
               map: map,
@@ -58,7 +58,13 @@
       newLocationFormHtmlContent = '<form name="locations" action="locations" method="post">';
       locations.forEach(function(location, index) {
         indexStartingAtOne = index + 1;
-        newLocationFormHtmlContent += indexStartingAtOne + '. <input type="text" name="location' + indexStartingAtOne + '" value="' + location + '"><br>';
+        lat = location.geometry.location.k;
+        lng = location.geometry.location.B;
+        locationNameInput = indexStartingAtOne + '. <input type="text" name="locationname_' + indexStartingAtOne + '" value="' + location.formatted_address + '">';
+        latLngText = '(' + lat + ',' + lng + ')';
+        latInput = '<input name="lat_' + indexStartingAtOne + '" type="hidden" value="' + lat +'">';
+        lngInput = '<input name="lng_' + indexStartingAtOne + '" type="hidden" value="' + lng +'">';
+        newLocationFormHtmlContent += locationNameInput + ' ' + latLngText + latInput + lngInput + '<br>';
       });
       newLocationFormHtmlContent += '<input type="submit" value="Submit">';
       locationsDiv.innerHTML = newLocationFormHtmlContent;
@@ -82,7 +88,5 @@
     </div>
   </div>
 </body>
-
-
 
 
