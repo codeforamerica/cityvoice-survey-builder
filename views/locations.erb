@@ -15,7 +15,6 @@
   <script>
     var geocoder;
     var map;
-    var locations = [];
 
     function initialize() {
       geocoder = new google.maps.Geocoder();
@@ -32,8 +31,7 @@
       geocoder.geocode( { 'address': address}, function(results, status) {
         if (status == google.maps.GeocoderStatus.OK) {
           map.setCenter(results[0].geometry.location);
-          locations.push(results[0]);
-          addLocation(results[0], locations.length);
+          addLocation(results[0]);
           var marker = new google.maps.Marker({
               map: map,
               position: results[0].geometry.location
@@ -44,16 +42,18 @@
       });
     }
 
-    function addLocation(location, locationCount) {
+    function addLocation(location) {
       locationsFormInputsDiv = document.getElementById('locations-form-inputs');
-      newLocationFormHtmlContent = '';
+      currentLocationCount = document.getElementsByClassName("location-input-set").length;
+      indexForNewLocation = currentLocationCount + 1;
+      newLocationFormHtmlContent = '<div class="location-input-set">';
       lat = location.geometry.location.k;
       lng = location.geometry.location.B;
-      locationNameInput = locationCount + '. <input type="text" name="locationname_' + locationCount + '" value="' + location.formatted_address + '">';
+      locationNameInput = indexForNewLocation + '. <input type="text" name="locationname_' + indexForNewLocation + '" value="' + location.formatted_address + '">';
       latLngText = '(' + lat + ',' + lng + ')';
-      latInput = '<input name="lat_' + locationCount + '" type="hidden" value="' + lat +'">';
-      lngInput = '<input name="lng_' + locationCount + '" type="hidden" value="' + lng +'">';
-      newLocationFormHtmlContent += locationNameInput + ' ' + latLngText + latInput + lngInput + '<br>';
+      latInput = '<input name="lat_' + indexForNewLocation + '" type="hidden" value="' + lat +'">';
+      lngInput = '<input name="lng_' + indexForNewLocation + '" type="hidden" value="' + lng +'">';
+      newLocationFormHtmlContent += locationNameInput + ' ' + latLngText + latInput + lngInput + '<br>' + '</div>';
       locationsFormInputsDiv.innerHTML += newLocationFormHtmlContent;
     }
 
