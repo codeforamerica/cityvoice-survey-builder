@@ -3,6 +3,10 @@ require 'httparty'
 require 'json'
 
 class CityvoiceBuilderHeroku < Sinatra::Base
+  get '/' do
+    erb :index
+  end
+
   get '/create-app' do
     raise "Need to set HEROKU_OAUTH_ID" unless ENV.has_key?('HEROKU_OAUTH_ID')
     @heroku_authorize_url = "https://id.heroku.com/oauth/authorize?" \
@@ -14,12 +18,28 @@ class CityvoiceBuilderHeroku < Sinatra::Base
   end
 
   get '/locations' do
+    @page_name = 'locations'
     erb :locations
   end
 
   post '/locations' do
     puts params
     erb :index
+  end
+
+  get '/questions' do
+    @page_name = 'questions'
+    erb :questions
+  end
+
+  get '/audio' do
+    @page_name = 'audio'
+    erb :audio
+  end
+
+  get '/push' do
+    @page_name = 'push'
+    erb :push
   end
 
   get '/callback' do
