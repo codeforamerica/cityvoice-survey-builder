@@ -1,0 +1,31 @@
+<h2>
+  Add Questions
+</h2>
+
+<form name="input" action="questions" method="post">
+
+<h3>Agree/Disagree</h3>
+
+<p>
+Add up to 4 "agree"/"disagree" questions
+</p>
+
+<ol>
+  <% (1..4).to_a.each do |number| %>
+    <li>
+      <input type="text" name="agreeshortname_<%= number %>" class="short_name" placeholder="ex. Property Outcome">
+      <input type="text" name="agreetext_<%= number %>" class="question_text" placeholder="ex. Do you think this property should be demolished?">
+    </li>
+  <% end %>
+</ol>
+
+<h3>Voice Question</h3>
+<p>
+  Add a question for people to leave voice comments
+</p>
+
+<input type="text" name="voice_question_text" class="question_text" placeholder="ex. What would make this park better?">
+
+<br><br>
+<input type="submit" value="Submit">
+</form>

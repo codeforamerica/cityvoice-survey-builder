@@ -1,3 +1,7 @@
 .step-selected {
   font-weight: bold;
 }
+
+.question_text {
+  width: 400px;
+}

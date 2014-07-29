@@ -24,12 +24,17 @@ class CityvoiceBuilderHeroku < Sinatra::Base
 
   post '/locations' do
     puts params
-    erb :index
+    redirect to('/questions')
   end
 
   get '/questions' do
     @page_name = 'questions'
     erb :questions
+  end
+
+  post '/questions' do
+    puts params
+    redirect to('/audio')
   end
 
   get '/audio' do
