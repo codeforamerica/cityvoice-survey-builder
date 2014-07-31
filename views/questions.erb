@@ -13,8 +13,8 @@ Add up to 4 "agree"/"disagree" questions
 <ol>
   <% (1..4).to_a.each do |number| %>
     <li>
-      <input type="text" name="agreeshortname_<%= number %>" class="short_name" placeholder="ex. Property Outcome">
-      <input type="text" name="agreetext_<%= number %>" class="question_text" placeholder="ex. Do you think this property should be demolished?">
+      <input type="text" name="questions[][agreeshortname]" class="short_name" placeholder="ex. Property Outcome">
+      <input type="text" name="questions[][agreetext]" class="question_text" placeholder="ex. Do you think this property should be demolished?">
     </li>
   <% end %>
 </ol>
