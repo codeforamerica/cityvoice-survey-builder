@@ -5,3 +5,7 @@
 .question_text {
   width: 400px;
 }
+
+div.layout-semibreve#main-container {
+  padding-top: 1em;
+}
