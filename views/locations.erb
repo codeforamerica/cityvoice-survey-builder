@@ -49,11 +49,11 @@
       newLocationFormHtmlContent = '<div class="location-input-set">';
       lat = location.geometry.location.k;
       lng = location.geometry.location.B;
-      locationNameInput = indexForNewLocation + '. <input type="text" name="locationname_' + indexForNewLocation + '" value="' + location.formatted_address + '">';
-      latLngText = '(' + lat + ',' + lng + ')';
+      locationName = location.formatted_address;
+      locationNameInput = indexForNewLocation + '. <input type="text" name="locationname_' + indexForNewLocation + '" value="' + locationName + '">';
       latInput = '<input name="lat_' + indexForNewLocation + '" type="hidden" value="' + lat +'">';
       lngInput = '<input name="lng_' + indexForNewLocation + '" type="hidden" value="' + lng +'">';
-      newLocationFormHtmlContent += locationNameInput + ' ' + latLngText + latInput + lngInput + '<br>' + '</div>';
+      newLocationFormHtmlContent += locationNameInput + ' ' + locationName + latInput + lngInput + '<br>' + '</div>';
       locationsFormInputsDiv.innerHTML += newLocationFormHtmlContent;
     }
 
@@ -67,13 +67,13 @@
   <div id="locations-top-text">
     Enter an address and click the button to add a location. You can change the display name for the location afterward.
   </div>
-  <div id="panel">
-    <input id="address" type="textbox" value="155 Ninth Street, SF, CA">
-    <input type="button" value="Add a location" onclick="geocodeAddress()">
-  </div>
   <div id="map-canvas"></div>
   <div id="locations">
     <h3>Locations</h3>
+    <div id="panel">
+      <input id="address" type="textbox" value="155 Ninth Street, SF, CA">
+      <input type="button" value="Add a location" onclick="geocodeAddress()">
+    </div>
     <div id="locations-list-text">
       To change a location name, edit the text in the address box below.
     </div>
