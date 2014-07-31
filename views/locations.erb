@@ -44,17 +44,14 @@
 
     function addLocation(location) {
       locationsFormInputsDiv = document.getElementById('locations-form-inputs');
-      currentLocationCount = document.getElementsByClassName("location-input-set").length;
-      indexForNewLocation = currentLocationCount + 1;
-      newLocationFormHtmlContent = '<div class="location-input-set">';
       lat = location.geometry.location.k;
       lng = location.geometry.location.B;
-      locationName = location.formatted_address;
-      locationNameInput = indexForNewLocation + '. <input type="text" name="locationname_' + indexForNewLocation + '" value="' + locationName + '">';
-      latInput = '<input name="lat_' + indexForNewLocation + '" type="hidden" value="' + lat +'">';
-      lngInput = '<input name="lng_' + indexForNewLocation + '" type="hidden" value="' + lng +'">';
-      newLocationFormHtmlContent += locationNameInput + ' ' + locationName + latInput + lngInput + '<br>' + '</div>';
-      locationsFormInputsDiv.innerHTML += newLocationFormHtmlContent;
+      formattedAddress = location.formatted_address;
+      addressInput = '<input name="locations[][address]" type="hidden" value="' + formattedAddress + '">';
+      latInput = '<input name="locations[][lat]" type="hidden" value="' + lat +'">';
+      lngInput = '<input name="locations[][lng]" type="hidden" value="' + lng +'">';
+      newContent = formattedAddress + addressInput + latInput + lngInput + '<br>';
+      locationsFormInputsDiv.innerHTML += '<div class="location-input-set"><li>' + newContent + '</li></div>';
     }
 
     google.maps.event.addDomListener(window, 'load', initializeMap);
@@ -78,8 +75,10 @@
       To change a location name, edit the text in the address box below.
     </div>
     <form name="locations" action="locations" method="post">
-      <div id="locations-form-inputs">
-      </div>
+      <ol>
+        <div id="locations-form-inputs">
+        </div>
+      </ol>
       <input type="submit" value="Submit locations">
     </form>
   </div>
