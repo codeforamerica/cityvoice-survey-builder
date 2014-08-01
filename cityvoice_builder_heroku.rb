@@ -36,7 +36,13 @@ class CityvoiceBuilderHeroku < Sinatra::Base
     erb :locations_edit
   end
 
+  post '/locations/edit' do
+    session[:locations] = params[:locations].to_json
+    redirect to('/questions')
+  end
+
   get '/questions' do
+    puts session[:locations]
     @page_name = 'questions'
     erb :questions
   end

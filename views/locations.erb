@@ -46,11 +46,12 @@
       locationsFormInputsDiv = document.getElementById('locations-form-inputs');
       lat = location.geometry.location.k;
       lng = location.geometry.location.B;
-      formattedAddress = location.formatted_address;
-      addressInput = '<input name="locations[][address]" type="hidden" value="' + formattedAddress + '">';
+      // Use the street address as the name
+      name = location.address_components[0].short_name + " " + location.address_components[1].short_name;
+      nameInput = '<input name="locations[][name]" type="hidden" value="' + name + '">';
       latInput = '<input name="locations[][lat]" type="hidden" value="' + lat +'">';
       lngInput = '<input name="locations[][lng]" type="hidden" value="' + lng +'">';
-      newContent = formattedAddress + addressInput + latInput + lngInput + '<br>';
+      newContent = name + nameInput + latInput + lngInput + '<br>';
       locationsFormInputsDiv.innerHTML += '<div class="location-input-set"><li>' + newContent + '</li></div>';
     }
 
