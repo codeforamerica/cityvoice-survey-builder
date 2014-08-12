@@ -27,9 +27,12 @@ class CityvoiceBuilderHeroku < Sinatra::Base
   post '/locations' do
     puts params
     session[:locations] = params[:locations].to_json
-    redirect to('/locations/edit'), 303
+    redirect to('/questions'), 303
+    #redirect to('/locations/edit'), 303
   end
 
+# No location name editing in v1, but backend work done here
+=begin
   get '/locations/edit' do
     @page_name = 'locations'
     @locations = JSON.parse(session[:locations])
@@ -40,6 +43,7 @@ class CityvoiceBuilderHeroku < Sinatra::Base
     session[:locations] = params[:locations].to_json
     redirect to('/questions')
   end
+=end
 
   get '/questions' do
     puts session[:locations]
@@ -49,13 +53,17 @@ class CityvoiceBuilderHeroku < Sinatra::Base
 
   post '/questions' do
     puts params
-    redirect to('/audio')
+    # Do audio later
+    #redirect to('/audio')
   end
 
+# Do audio later
+=begin
   get '/audio' do
     @page_name = 'audio'
     erb :audio
   end
+=end
 
   get '/push' do
     @page_name = 'push'

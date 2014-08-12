@@ -44,8 +44,8 @@
 
     function addLocation(location) {
       locationsFormInputsDiv = document.getElementById('locations-form-inputs');
-      lat = location.geometry.location.k;
-      lng = location.geometry.location.B;
+      lat = location.geometry.location.lat();
+      lng = location.geometry.location.lng();
       // Use the street address as the name
       name = location.address_components[0].short_name + " " + location.address_components[1].short_name;
       nameInput = '<input name="locations[][name]" type="hidden" value="' + name + '">';
