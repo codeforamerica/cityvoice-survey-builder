@@ -2,6 +2,7 @@ require 'sinatra'
 require 'httparty'
 require 'json'
 require 'redis'
+require 'securerandom'
 
 class CityvoiceBuilderHeroku < Sinatra::Base
   enable :sessions
@@ -19,6 +20,11 @@ class CityvoiceBuilderHeroku < Sinatra::Base
     erb :index
   end
 
+  post '/deployment/new' do
+    user_token = SecureRandom.hex
+    redirect to("/#{user_token}/locations")
+  end
+
   get '/create-app' do
     raise "Need to set HEROKU_OAUTH_ID" unless ENV.has_key?('HEROKU_OAUTH_ID')
     @heroku_authorize_url = "https://id.heroku.com/oauth/authorize?" \
@@ -29,7 +35,7 @@ class CityvoiceBuilderHeroku < Sinatra::Base
     erb :index
   end
 
-  get '/locations' do
+  get '/:user_token/locations' do
     @page_name = 'locations'
     erb :locations
   end
