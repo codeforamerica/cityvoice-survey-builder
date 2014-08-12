@@ -81,6 +81,9 @@ class CityvoiceBuilderHeroku < Sinatra::Base
     erb :push
   end
 
+  get '/tarball/:tarball_id' do
+  end
+
   get '/callback' do
     @token_exchange_response = HTTParty.post("https://id.heroku.com/oauth/token", \
       query: { \
