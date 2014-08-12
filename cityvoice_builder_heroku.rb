@@ -3,6 +3,8 @@ require 'httparty'
 require 'json'
 
 class CityvoiceBuilderHeroku < Sinatra::Base
+  enable :sessions
+
   get '/' do
     erb :index
   end
@@ -24,23 +26,44 @@ class CityvoiceBuilderHeroku < Sinatra::Base
 
   post '/locations' do
     puts params
-    redirect to('/questions')
+    session[:locations] = params[:locations].to_json
+    redirect to('/questions'), 303
+    #redirect to('/locations/edit'), 303
   end
 
+# No location name editing in v1, but backend work done here
+=begin
+  get '/locations/edit' do
+    @page_name = 'locations'
+    @locations = JSON.parse(session[:locations])
+    erb :locations_edit
+  end
+
+  post '/locations/edit' do
+    session[:locations] = params[:locations].to_json
+    redirect to('/questions')
+  end
+=end
+
   get '/questions' do
+    puts session[:locations]
     @page_name = 'questions'
     erb :questions
   end
 
   post '/questions' do
     puts params
-    redirect to('/audio')
+    # Do audio later
+    #redirect to('/audio')
   end
 
+# Do audio later
+=begin
   get '/audio' do
     @page_name = 'audio'
     erb :audio
   end
+=end
 
   get '/push' do
     @page_name = 'push'
