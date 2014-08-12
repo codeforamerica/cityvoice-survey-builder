@@ -28,6 +28,7 @@ class CityvoiceBuilderHeroku < Sinatra::Base
     puts params
     session[:locations] = params[:locations].to_json
     redirect to('/questions'), 303
+    # For eventual location name-editing
     #redirect to('/locations/edit'), 303
   end
 
