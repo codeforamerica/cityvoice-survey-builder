@@ -1,9 +1,19 @@
 require 'sinatra'
 require 'httparty'
 require 'json'
+require 'redis'
 
 class CityvoiceBuilderHeroku < Sinatra::Base
   enable :sessions
+
+  configure do
+    set :redis, Redis.new(:host => ENV['REDISTOGO_URL'])
+    # Usage:
+    # redis.set("keyname", "value")
+    # redis.get("keyname")
+    # redis.expire("keyname", 100) # deletes keyname after 100 seconds
+    # redis.ttl("keyname") # returns remaining seconds for life of keyname
+  end
 
   get '/' do
     erb :index

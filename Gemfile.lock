@@ -34,6 +34,7 @@ GEM
     rspec-mocks (3.0.0)
       rspec-support (~> 3.0.0)
     rspec-support (3.0.0)
+    redis (3.1.0)
     sinatra (1.4.5)
       rack (~> 1.4)
       rack-protection (~> 1.4)
@@ -52,4 +53,5 @@ DEPENDENCIES
   pry
   rack-test
   rspec
+  redis
   sinatra
