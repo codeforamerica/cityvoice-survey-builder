@@ -85,7 +85,7 @@ class CityvoiceBuilderHeroku < Sinatra::Base
   end
 =end
 
-  get '/push' do
+  get '/:user_token/push' do
     @page_name = 'push'
     erb :push
   end

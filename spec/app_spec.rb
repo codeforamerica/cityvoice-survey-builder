@@ -80,4 +80,11 @@ describe CityvoiceBuilderHeroku do
       expect(last_response.location).to include("/#{user_token}/push")
     end
   end
+
+  describe 'GET /:user_token/push' do
+    it 'responds successfully' do
+      get '/fake_user_token/push'
+      expect(last_response.status).to eq(200)
+    end
+  end
 end
