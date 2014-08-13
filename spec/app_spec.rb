@@ -72,7 +72,6 @@ describe CityvoiceBuilderHeroku do
     end
 
     it 'saves questions in redis for the user' do
-      puts questions_hash
       expect(fake_redis).to have_received(:set).with("#{user_token}_questions", questions_hash["questions"].to_json)
     end
 

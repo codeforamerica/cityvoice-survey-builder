@@ -69,7 +69,6 @@ class CityvoiceBuilderHeroku < Sinatra::Base
   end
 
   post '/:user_token/questions' do
-    puts params
     redis = Redis.new(:host => ENV['REDISTOGO_URL'])
     key_for_questions = "#{params[:user_token]}_questions"
     redis.set(key_for_questions, params[:questions].to_json)
