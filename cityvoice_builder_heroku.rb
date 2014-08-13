@@ -44,7 +44,7 @@ class CityvoiceBuilderHeroku < Sinatra::Base
     redis = Redis.new(:host => ENV['REDISTOGO_URL'])
     key_for_locations = "#{params[:user_token]}_locations"
     redis.set(key_for_locations, params[:locations].to_json)
-    redirect to('/questions'), 303
+    redirect to("/#{params[:user_token]}/questions"), 303
     # For eventual location name-editing
     #redirect to('/locations/edit'), 303
   end

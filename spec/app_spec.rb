@@ -40,10 +40,18 @@ describe CityvoiceBuilderHeroku do
     let(:user_token) { 'myusertoken' }
     let(:locations_hash) { { :locations => [{"name" => "155 9th St", "lat" => "lat1", "lng" => "lng1"}, {"name" => "200 Fell St", "lat" => "lat2", "lng" => "lng2"}] } }
 
-    it 'saves locations in redis for the user' do
+    before do
       allow(Redis).to receive(:new).and_return(fake_redis)
       post "/#{user_token}/locations", locations_hash
+    end
+
+    it 'saves locations in redis for the user' do
       expect(fake_redis).to have_received(:set).with("#{user_token}_locations", locations_hash[:locations].to_json)
+    end
+
+    it 'redirects to /:user_token/questions' do
+      expect(last_response).to be_redirect
+      expect(last_response.location).to include("/#{user_token}/questions")
     end
   end
 end
