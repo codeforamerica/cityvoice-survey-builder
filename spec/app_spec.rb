@@ -1,6 +1,9 @@
 require 'spec_helper'
 
 describe CityvoiceBuilderHeroku do
+  let(:fake_redis) { double("FakeRedis", :set => 'var set') }
+  let(:user_token) { 'myusertoken' }
+
   it 'has a redis connection' do
     expect(CityvoiceBuilderHeroku.settings.redis).to be_a(Redis)
   end
@@ -36,8 +39,6 @@ describe CityvoiceBuilderHeroku do
   end
 
   describe 'POST /:user_token/locations' do
-    let(:fake_redis) { double("FakeRedis", :set => 'var set') }
-    let(:user_token) { 'myusertoken' }
     let(:locations_hash) { { :locations => [{"name" => "155 9th St", "lat" => "lat1", "lng" => "lng1"}, {"name" => "200 Fell St", "lat" => "lat2", "lng" => "lng2"}] } }
 
     before do
