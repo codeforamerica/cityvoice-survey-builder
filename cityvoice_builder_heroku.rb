@@ -1,12 +1,28 @@
 require 'sinatra'
 require 'httparty'
 require 'json'
+require 'redis'
+require 'securerandom'
 
 class CityvoiceBuilderHeroku < Sinatra::Base
   enable :sessions
 
+  configure do
+    set :redis, Redis.new(:host => ENV['REDISTOGO_URL'])
+    # Usage:
+    # redis.set("keyname", "value")
+    # redis.get("keyname")
+    # redis.expire("keyname", 100) # deletes keyname after 100 seconds
+    # redis.ttl("keyname") # returns remaining seconds for life of keyname
+  end
+
   get '/' do
     erb :index
+  end
+
+  post '/deployment/new' do
+    user_token = SecureRandom.hex
+    redirect to("/#{user_token}/locations")
   end
 
   get '/create-app' do
@@ -19,15 +35,16 @@ class CityvoiceBuilderHeroku < Sinatra::Base
     erb :index
   end
 
-  get '/locations' do
+  get '/:user_token/locations' do
     @page_name = 'locations'
     erb :locations
   end
 
-  post '/locations' do
-    puts params
-    session[:locations] = params[:locations].to_json
-    redirect to('/questions'), 303
+  post '/:user_token/locations' do
+    redis = Redis.new(:host => ENV['REDISTOGO_URL'])
+    key_for_locations = "#{params[:user_token]}_locations"
+    redis.set(key_for_locations, params[:locations].to_json)
+    redirect to("/#{params[:user_token]}/questions"), 303
     # For eventual location name-editing
     #redirect to('/locations/edit'), 303
   end
@@ -46,14 +63,16 @@ class CityvoiceBuilderHeroku < Sinatra::Base
   end
 =end
 
-  get '/questions' do
-    puts session[:locations]
+  get '/:user_token/questions' do
     @page_name = 'questions'
     erb :questions
   end
 
-  post '/questions' do
-    puts params
+  post '/:user_token/questions' do
+    redis = Redis.new(:host => ENV['REDISTOGO_URL'])
+    key_for_questions = "#{params[:user_token]}_questions"
+    redis.set(key_for_questions, params[:questions].to_json)
+    redirect to("/#{params[:user_token]}/push"), 303
     # Do audio later
     #redirect to('/audio')
   end
@@ -66,9 +85,12 @@ class CityvoiceBuilderHeroku < Sinatra::Base
   end
 =end
 
-  get '/push' do
+  get '/:user_token/push' do
     @page_name = 'push'
     erb :push
+  end
+
+  get '/tarball/:tarball_id' do
   end
 
   get '/callback' do
