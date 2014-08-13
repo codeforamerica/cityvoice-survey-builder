@@ -63,14 +63,17 @@ class CityvoiceBuilderHeroku < Sinatra::Base
   end
 =end
 
-  get '/questions' do
-    puts session[:locations]
+  get '/:user_token/questions' do
     @page_name = 'questions'
     erb :questions
   end
 
-  post '/questions' do
+  post '/:user_token/questions' do
     puts params
+    redis = Redis.new(:host => ENV['REDISTOGO_URL'])
+    key_for_questions = "#{params[:user_token]}_questions"
+    redis.set(key_for_questions, params[:questions].to_json)
+    redirect to("/#{params[:user_token]}/push"), 303
     # Do audio later
     #redirect to('/audio')
   end

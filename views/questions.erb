@@ -13,8 +13,8 @@ Add up to 4 "agree"/"disagree" questions
 <ol>
   <% (1..4).to_a.each do |number| %>
     <li>
-      <input type="text" name="questions[][agreeshortname]" class="short_name" placeholder="ex. Property Outcome">
-      <input type="text" name="questions[][agreetext]" class="question_text" placeholder="ex. Do you think this property should be demolished?">
+      <input type="text" name="questions[][agree_questions][][short_name]" class="short_name" placeholder="ex. Property Outcome">
+      <input type="text" name="questions[][agree_questions][][question_text]" class="question_text" placeholder="ex. Do you think this property should be demolished?">
     </li>
   <% end %>
 </ol>
@@ -24,7 +24,7 @@ Add up to 4 "agree"/"disagree" questions
   Add a question for people to leave voice comments
 </p>
 
-<input type="text" name="voice_question_text" class="question_text" placeholder="ex. What would make this park better?">
+<input type="text" name="questions[][voice_question_text]" class="question_text" placeholder="ex. What would make this park better?">
 
 <br><br>
 <input type="submit" value="Submit">
