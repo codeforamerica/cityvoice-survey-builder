@@ -25,16 +25,6 @@ class CityvoiceBuilderHeroku < Sinatra::Base
     redirect to("/#{user_token}/locations")
   end
 
-  get '/create-app' do
-    raise "Need to set HEROKU_OAUTH_ID" unless ENV.has_key?('HEROKU_OAUTH_ID')
-    @heroku_authorize_url = "https://id.heroku.com/oauth/authorize?" \
-      + "client_id=#{ENV['HEROKU_OAUTH_ID']}" \
-      + "&response_type=code" \
-      + "&scope=global" \
-      + "&state="
-    erb :index
-  end
-
   get '/:user_token/locations' do
     @page_name = 'locations'
     erb :locations
@@ -91,6 +81,16 @@ class CityvoiceBuilderHeroku < Sinatra::Base
   end
 
   get '/tarball/:tarball_id' do
+  end
+
+  get '/create-app' do
+    raise "Need to set HEROKU_OAUTH_ID" unless ENV.has_key?('HEROKU_OAUTH_ID')
+    @heroku_authorize_url = "https://id.heroku.com/oauth/authorize?" \
+      + "client_id=#{ENV['HEROKU_OAUTH_ID']}" \
+      + "&response_type=code" \
+      + "&scope=global" \
+      + "&state="
+    erb :push
   end
 
   get '/callback' do
