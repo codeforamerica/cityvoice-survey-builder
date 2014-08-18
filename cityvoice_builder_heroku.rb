@@ -85,8 +85,10 @@ class CityvoiceBuilderHeroku < Sinatra::Base
     token = params[:user_token]
     redis = Redis.new(:host => ENV['REDISTOGO_URL'])
     # Get JSON data out of Redis
-    locations = JSON.parse(redis.get("#{params[:user_token]}_locations"))
-    questions = JSON.parse(redis.get("#{params[:user_token]}_questions"))
+    locations = JSON.parse(redis.get("#{params[:user_token]}_locations"))["locations"]
+    questions = JSON.parse(redis.get("#{params[:user_token]}_questions"))["questions"]
+    locations_csv_string = CityvoiceCsvGenerator.locations_csv(locations)
+    questions_csv_string = CityvoiceCsvGenerator.questions_csv(questions)
     binding.pry
     # Download latest CityVoice Tarball from GitHub to /tmp
     source_tarball = HTTParty.get("http://github.com/codeforamerica/cityvoice/tarball/master")
