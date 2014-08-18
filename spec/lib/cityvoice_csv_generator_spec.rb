@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe CityvoiceCsvGenerator do
-  describe 'LocationsCsv' do
+  describe '::locations_csv' do
     let(:locations_array) { [{"name" => "155 9th St", "lat" => "lat1", "lng" => "lng1"}, {"name" => "200 Fell St", "lat" => "lat2", "lng" => "lng2"}] }
 
     it 'creates a CSV string in CityVoice format' do
