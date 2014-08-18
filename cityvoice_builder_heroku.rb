@@ -87,9 +87,6 @@ class CityvoiceBuilderHeroku < Sinatra::Base
     erb :push
   end
 
-  get '/tarball/:tarball_id' do
-  end
-
   get '/create-app' do
     raise "Need to set HEROKU_OAUTH_ID" unless ENV.has_key?('HEROKU_OAUTH_ID')
     @heroku_authorize_url = "https://id.heroku.com/oauth/authorize?" \
