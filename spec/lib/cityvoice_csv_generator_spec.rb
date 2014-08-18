@@ -14,4 +14,19 @@ EOF
       expect(new_csv).to eq(desired_csv_string)
     end
   end
+
+  describe '::questions_csv' do
+    let(:questions_hash) { { "agree_questions" => [{"short_name" => "Property Outcome", "question_text" => "Should this property be demolished?"}, {"short_name" => "Property Condition", "question_text" => "Is this property in good condition?"}], "voice_question_text" => "What else do you think about this property?" } }
+
+    it 'creates a CSV string in CityVoice format' do
+      new_csv = CityvoiceCsvGenerator.questions_csv(questions_hash)
+      desired_csv_string = <<EOF
+Short Name,Feedback Type,Question Text
+Property Outcome,numerical_response,Should this property be demolished?
+Property Condition,numerical_response,Is this property in good condition?
+Voice Question,voice_file,What else do you think about this property?
+EOF
+      expect(new_csv).to eq(desired_csv_string)
+    end
+  end
 end
