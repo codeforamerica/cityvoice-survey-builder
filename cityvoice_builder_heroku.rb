@@ -4,6 +4,7 @@ require 'json'
 require 'redis'
 require 'securerandom'
 require 'fileutils'
+require File.expand_path('../lib/cityvoice_csv_generator', __FILE__)
 
 class CityvoiceBuilderHeroku < Sinatra::Base
   enable :sessions
