@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe CityvoiceBuilderHeroku do
-  let(:fake_redis) { double("FakeRedis", :set => 'var set') }
   let(:user_token) { 'myusertoken' }
 
   it 'has a redis connection' do
@@ -40,6 +39,7 @@ describe CityvoiceBuilderHeroku do
 
   describe 'POST /:user_token/locations' do
     let(:locations_hash) { { "locations" => [{"name" => "155 9th St", "lat" => "lat1", "lng" => "lng1"}, {"name" => "200 Fell St", "lat" => "lat2", "lng" => "lng2"}] } }
+    let(:fake_redis) { double("FakeRedis", :set => 'var set') }
 
     before do
       allow(Redis).to receive(:new).and_return(fake_redis)
@@ -65,6 +65,7 @@ describe CityvoiceBuilderHeroku do
 
   describe 'POST /:user_token/questions' do
     let(:questions_hash) { { "questions" => { "agree_questions" => [{"short_name" => "Property Outcome", "question_text" => "Should this property be demolished?"}, {"short_name" => "Property Condition", "question_text" => "Is this property in good condition?"}], "voice_question_text" => "What else do you think about this property?" } } }
+    let(:fake_redis) { double("FakeRedis", :set => 'var set') }
 
     before do
       allow(Redis).to receive(:new).and_return(fake_redis)
@@ -77,11 +78,43 @@ describe CityvoiceBuilderHeroku do
 
     it 'redirects to /:user_token/push' do
       expect(last_response).to be_redirect
-      expect(last_response.location).to include("/#{user_token}/push")
+      expect(last_response.location).to include("/#{user_token}/tarball")
+    end
+  end
+
+  describe 'GET /:user_token/tarball' do
+    before do
+      get '/fake_user_token/tarball'
+    end
+
+    it 'responds successfully' do
+      expect(last_response.status).to eq(200)
+    end
+
+    it 'has a button for building the tarball' do
+      button_snippet = "action=\"/fake_user_token/tarball/build\" method=\"post\""
+      expect(last_response.body).to include(button_snippet)
+    end
+  end
+
+  describe 'POST /:user_token/tarball/build' do
+    before do
+      post '/fake_user_token/tarball/build'
+    end
+
+    it 'responds successfully' do
+      expect(last_response.status).to eq(200)
     end
   end
 
   describe 'GET /:user_token/push' do
+    it 'responds successfully' do
+      get '/fake_user_token/push'
+      expect(last_response.status).to eq(200)
+    end
+  end
+
+  describe 'POST /:user_token/push' do
     it 'responds successfully' do
       get '/fake_user_token/push'
       expect(last_response.status).to eq(200)

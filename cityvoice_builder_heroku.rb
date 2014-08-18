@@ -62,7 +62,7 @@ class CityvoiceBuilderHeroku < Sinatra::Base
     redis = Redis.new(:host => ENV['REDISTOGO_URL'])
     key_for_questions = "#{params[:user_token]}_questions"
     redis.set(key_for_questions, params[:questions].to_json)
-    redirect to("/#{params[:user_token]}/push"), 303
+    redirect to("/#{params[:user_token]}/tarball"), 302
     # Do audio later
     #redirect to('/audio')
   end
@@ -74,6 +74,13 @@ class CityvoiceBuilderHeroku < Sinatra::Base
     erb :audio
   end
 =end
+
+  get '/:user_token/tarball' do
+    erb :tarball
+  end
+
+  post '/:user_token/tarball/build' do
+  end
 
   get '/:user_token/push' do
     @page_name = 'push'
