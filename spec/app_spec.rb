@@ -109,9 +109,9 @@ describe CityvoiceBuilderHeroku do
       post '/fake_user_token/tarball/build'
     end
 
-    it 'responds successfully' do
-      expect(last_response.status).to eq(200)
-    end
+#    it 'responds successfully' do
+#      expect(last_response.status).to eq(200)
+#    end
 
 #    it 'pulls data from redis' do
 #      expect(fake_redis).to have_received(:get).with("fake_user_token_locations").once

@@ -5,6 +5,7 @@ require 'redis'
 require 'securerandom'
 require 'fileutils'
 require File.expand_path('../lib/cityvoice_csv_generator', __FILE__)
+require 'pry'
 
 class CityvoiceBuilderHeroku < Sinatra::Base
   enable :sessions
@@ -81,18 +82,25 @@ class CityvoiceBuilderHeroku < Sinatra::Base
     erb :tarball
   end
 
+  get '/:user_token/tarball/download' do
+    redis = Redis.new(:host => ENV['REDISTOGO_URL'])
+    binary = redis.get("#{params[:user_token]}_tarball")
+    send_file binary, :filename => 'cityvoice_tarball.tar.gz'
+  end
+
   post '/:user_token/tarball/build' do
     token = params[:user_token]
     redis = Redis.new(:host => ENV['REDISTOGO_URL'])
     # Get JSON data out of Redis
-    locations = JSON.parse(redis.get("#{params[:user_token]}_locations"))["locations"]
-    questions = JSON.parse(redis.get("#{params[:user_token]}_questions"))["questions"]
+    # Parse JSON from Redis into Ruby hashes
+    locations = JSON.parse(redis.get("#{params[:user_token]}_locations"))
+    questions = JSON.parse(redis.get("#{params[:user_token]}_questions"))
+    binding.pry
     locations_csv_string = CityvoiceCsvGenerator.locations_csv(locations)
     questions_csv_string = CityvoiceCsvGenerator.questions_csv(questions)
-    binding.pry
     # Download latest CityVoice Tarball from GitHub to /tmp
     source_tarball = HTTParty.get("http://github.com/codeforamerica/cityvoice/tarball/master")
-    tarball_path = "/tmp/cityvoice_source_#{token}.tar.gz"
+    tarball_path = "/tmp/cityvoice_source_from_github_#{token}.tar.gz"
     FileUtils.rm_rf(tarball_path)
     File.open(tarball_path, "w") do |file|
       file.write(source_tarball)
@@ -104,12 +112,24 @@ class CityvoiceBuilderHeroku < Sinatra::Base
     system("tar -zxvf #{tarball_path} -C #{destination_path}")
     path_to_repo = Dir[destination_path + "/*"][0]
     # Delete CSV files in tmp folder
-    File.delete("#{path_to_repo}/data/locations.csv")
-    File.delete("#{path_to_repo}/data/questions.csv")
-    # Parse JSON from Redis into Ruby hashes
+    locations_csv_path = "#{path_to_repo}/data/locations.csv"
+    questions_csv_path = "#{path_to_repo}/data/questions.csv"
+    File.delete(locations_csv_path)
+    File.delete(questions_csv_path)
     # Write new CSV files in tmp folder
+    File.open(locations_csv_path, 'w') do |file|
+      file.write(locations_csv_string)
+    end
+    File.open(questions_csv_path, 'w') do |file|
+      file.write(questions_csv_string)
+    end
     # Create tarball of tmp folder
+    custom_tarball_path = "/tmp/cityvoice_custom_tarball_#{token}.tar.gz"
+    system("tar -C #{path_to_repo} -pczf #{custom_tarball_path} .")
     # Store tarball in Redis
+    File.open(custom_tarball_path, 'rb') do |tarball_binary|
+      redis.set("#{token}_tarball", tarball_binary)
+    end
   end
 
   get '/:user_token/push' do
