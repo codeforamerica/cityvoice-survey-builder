@@ -3,6 +3,7 @@ require 'httparty'
 require 'json'
 require 'redis'
 require 'securerandom'
+require 'fileutils'
 
 class CityvoiceBuilderHeroku < Sinatra::Base
   enable :sessions
@@ -80,9 +81,31 @@ class CityvoiceBuilderHeroku < Sinatra::Base
   end
 
   post '/:user_token/tarball/build' do
+    token = params[:user_token]
     redis = Redis.new(:host => ENV['REDISTOGO_URL'])
+    # Download latest CityVoice Tarball from GitHub to /tmp
+    source_tarball = HTTParty.get("http://github.com/codeforamerica/cityvoice/tarball/master")
+    tarball_path = "/tmp/cityvoice_source_#{token}.tar.gz"
+    FileUtils.rm_rf(tarball_path)
+    File.open(tarball_path, "w") do |file|
+      file.write(source_tarball)
+    end
+    # Extract tarball to folder in tmp
+    destination_path = "/tmp/cityvoice_source_decompressed_#{token}"
+    FileUtils.rm_rf(destination_path)
+    FileUtils.mkdir(destination_path)
+    system("tar -zxvf #{tarball_path} -C #{destination_path}")
+    path_to_repo = Dir[destination_path + "/*"][0]
+    # Delete CSV files in tmp folder
+    File.delete("#{path_to_repo}/data/locations.csv")
+    File.delete("#{path_to_repo}/data/questions.csv")
+    # Get JSON data out of Redis
     locations = redis.get("#{params[:user_token]}_locations")
     questions = redis.get("#{params[:user_token]}_questions")
+    # Parse JSON from Redis into Ruby hashes
+    # Write new CSV files in tmp folder
+    # Create tarball of tmp folder
+    # Store tarball in Redis
   end
 
   get '/:user_token/push' do
