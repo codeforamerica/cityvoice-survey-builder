@@ -62,9 +62,14 @@ class CityvoiceBuilderHeroku < Sinatra::Base
   end
 
   post '/:user_token/questions' do
+    clean_questions = Hash.new
+    clean_questions["agree_questions"] = params[:questions]["agree_questions"].select do |q|
+      q["short_name"] != ""
+    end
+    clean_questions["voice_question_text"] = params[:questions]["voice_question_text"]
     redis = Redis.new(:host => ENV['REDISTOGO_URL'])
     key_for_questions = "#{params[:user_token]}_questions"
-    redis.set(key_for_questions, params[:questions].to_json)
+    redis.set(key_for_questions, clean_questions.to_json)
     redirect to("/#{params[:user_token]}/tarball"), 302
     # Do audio later
     #redirect to('/audio')
