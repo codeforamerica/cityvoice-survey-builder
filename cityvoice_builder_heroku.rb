@@ -85,7 +85,12 @@ class CityvoiceBuilderHeroku < Sinatra::Base
   get '/:user_token/tarball/download' do
     redis = Redis.new(:host => ENV['REDISTOGO_URL'])
     binary = redis.get("#{params[:user_token]}_tarball")
-    send_file binary, :filename => 'cityvoice_tarball.tar.gz'
+    tarball_path = "/tmp/tmp_custom_tarball_#{params[:user_token]}.tar.gz"
+    FileUtils.rm_rf(tarball_path)
+    File.open(tarball_path, 'wb') do |file|
+      file.write(binary)
+    end
+    send_file(tarball_path, :filename => "cityvoice_custom_tarball_#{params[:user_token]}.tar.gz")
   end
 
   post '/:user_token/tarball/build' do
@@ -95,7 +100,6 @@ class CityvoiceBuilderHeroku < Sinatra::Base
     # Parse JSON from Redis into Ruby hashes
     locations = JSON.parse(redis.get("#{params[:user_token]}_locations"))
     questions = JSON.parse(redis.get("#{params[:user_token]}_questions"))
-    binding.pry
     locations_csv_string = CityvoiceCsvGenerator.locations_csv(locations)
     questions_csv_string = CityvoiceCsvGenerator.questions_csv(questions)
     # Download latest CityVoice Tarball from GitHub to /tmp
@@ -127,9 +131,8 @@ class CityvoiceBuilderHeroku < Sinatra::Base
     custom_tarball_path = "/tmp/cityvoice_custom_tarball_#{token}.tar.gz"
     system("tar -C #{path_to_repo} -pczf #{custom_tarball_path} .")
     # Store tarball in Redis
-    File.open(custom_tarball_path, 'rb') do |tarball_binary|
-      redis.set("#{token}_tarball", tarball_binary)
-    end
+    raw_custom_tarball_binary = IO.binread(custom_tarball_path)
+    redis.set("#{token}_tarball", raw_custom_tarball_binary)
   end
 
   get '/:user_token/push' do
