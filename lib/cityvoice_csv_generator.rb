@@ -6,6 +6,7 @@ module CityvoiceCsvGenerator
         csv << [loc["name"], loc["lat"], loc["lng"]]
       end
     end
+    csv_string
   end
 
   def self.questions_csv(questions)
