@@ -99,11 +99,13 @@ describe CityvoiceBuilderHeroku do
 
   describe 'POST /:user_token/tarball/build' do
     let(:fake_redis) { double("Redis") }
+    let(:locations_json) { { "locations" => [{"name" => "155 9th St", "lat" => "lat1", "lng" => "lng1"}, {"name" => "200 Fell St", "lat" => "lat2", "lng" => "lng2"}] }.to_json }
+    let(:questions_json) { { "questions" => { "agree_questions" => [{"short_name" => "Property Outcome", "question_text" => "Should this property be demolished?"}, {"short_name" => "Property Condition", "question_text" => "Is this property in good condition?"}], "voice_question_text" => "What else do you think about this property?" } }.to_json }
 
     before do
       allow(Redis).to receive(:new).and_return(fake_redis)
-      allow(fake_redis).to receive(:get).with("fake_user_token_locations").and_return('locationsjson')
-      allow(fake_redis).to receive(:get).with("fake_user_token_questions").and_return('questionsjson')
+      allow(fake_redis).to receive(:get).with("fake_user_token_locations").and_return(locations_json)
+      allow(fake_redis).to receive(:get).with("fake_user_token_questions").and_return(questions_json)
       post '/fake_user_token/tarball/build'
     end
 

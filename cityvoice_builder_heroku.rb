@@ -84,6 +84,10 @@ class CityvoiceBuilderHeroku < Sinatra::Base
   post '/:user_token/tarball/build' do
     token = params[:user_token]
     redis = Redis.new(:host => ENV['REDISTOGO_URL'])
+    # Get JSON data out of Redis
+    locations = JSON.parse(redis.get("#{params[:user_token]}_locations"))
+    questions = JSON.parse(redis.get("#{params[:user_token]}_questions"))
+    binding.pry
     # Download latest CityVoice Tarball from GitHub to /tmp
     source_tarball = HTTParty.get("http://github.com/codeforamerica/cityvoice/tarball/master")
     tarball_path = "/tmp/cityvoice_source_#{token}.tar.gz"
@@ -100,9 +104,6 @@ class CityvoiceBuilderHeroku < Sinatra::Base
     # Delete CSV files in tmp folder
     File.delete("#{path_to_repo}/data/locations.csv")
     File.delete("#{path_to_repo}/data/questions.csv")
-    # Get JSON data out of Redis
-    locations = redis.get("#{params[:user_token]}_locations")
-    questions = redis.get("#{params[:user_token]}_questions")
     # Parse JSON from Redis into Ruby hashes
     # Write new CSV files in tmp folder
     # Create tarball of tmp folder
