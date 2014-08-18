@@ -80,6 +80,9 @@ class CityvoiceBuilderHeroku < Sinatra::Base
   end
 
   post '/:user_token/tarball/build' do
+    redis = Redis.new(:host => ENV['REDISTOGO_URL'])
+    locations = redis.get("#{params[:user_token]}_locations")
+    questions = redis.get("#{params[:user_token]}_questions")
   end
 
   get '/:user_token/push' do

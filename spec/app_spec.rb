@@ -98,12 +98,22 @@ describe CityvoiceBuilderHeroku do
   end
 
   describe 'POST /:user_token/tarball/build' do
+    let(:fake_redis) { double("Redis") }
+
     before do
+      allow(Redis).to receive(:new).and_return(fake_redis)
+      allow(fake_redis).to receive(:get).with("fake_user_token_locations").and_return('locationsjson')
+      allow(fake_redis).to receive(:get).with("fake_user_token_questions").and_return('questionsjson')
       post '/fake_user_token/tarball/build'
     end
 
     it 'responds successfully' do
       expect(last_response.status).to eq(200)
+    end
+
+    it 'pulls data from redis' do
+      expect(fake_redis).to have_received(:get).with("fake_user_token_locations").once
+      expect(fake_redis).to have_received(:get).with("fake_user_token_questions").once
     end
   end
 
