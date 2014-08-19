@@ -139,6 +139,7 @@ class CityvoiceBuilderHeroku < Sinatra::Base
     # Store tarball in Redis
     raw_custom_tarball_binary = IO.binread(custom_tarball_path)
     redis.set("#{token}_tarball", raw_custom_tarball_binary)
+    redirect to("/#{params[:user_token]}/push"), 302
   end
 
   get '/:user_token/push' do
