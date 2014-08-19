@@ -171,7 +171,7 @@ class CityvoiceBuilderHeroku < Sinatra::Base
         "Content-Type" => "application/json" \
       }, \
       body: "{\"source_blob\": { \"url\": \"#{tarball_url}\"}}")
-    @built_app_url = "https://#{JSON.parse(@app_build_response.body)["app"]["name"]}.herokuapp.com"
+    #@built_app_url = "https://#{JSON.parse(@app_build_response.body)["app"]["name"]}.herokuapp.com"
     erb :response
   end
 end
