@@ -143,21 +143,17 @@ class CityvoiceBuilderHeroku < Sinatra::Base
   end
 
   get '/:user_token/push' do
-    @page_name = 'push'
-    erb :push
-  end
-
-  get '/create-app' do
-    raise "Need to set HEROKU_OAUTH_ID" unless ENV.has_key?('HEROKU_OAUTH_ID')
     @heroku_authorize_url = "https://id.heroku.com/oauth/authorize?" \
       + "client_id=#{ENV['HEROKU_OAUTH_ID']}" \
       + "&response_type=code" \
       + "&scope=global" \
-      + "&state="
+      + "&state=#{params[:user_token]}"
+    @page_name = 'push'
     erb :push
   end
 
   get '/callback' do
+    tarball_url = "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}/#{params[:state]}/tarball/download"
     @token_exchange_response = HTTParty.post("https://id.heroku.com/oauth/token", \
       query: { \
         grant_type: "authorization_code", \
@@ -170,7 +166,7 @@ class CityvoiceBuilderHeroku < Sinatra::Base
         "Accept" => "application/vnd.heroku+json; version=3", \
         "Content-Type" => "application/json" \
       }, \
-      body: "{\"source_blob\": { \"url\": \"https://github.com/daguar/cityvoice/tarball/add-heroku-app-json-file\"}}")
+      body: "{\"source_blob\": { \"url\": \"#{tarball_url}\"}}")
     @built_app_url = "https://#{JSON.parse(@app_build_response.body)["app"]["name"]}.herokuapp.com"
     erb :response
   end
