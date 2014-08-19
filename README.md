@@ -2,7 +2,7 @@
 
 ## Deployment
 
-Non-CFA users shouldn't need to deploy this yourself, but for documentation purposes, here goes!
+Non-CFA users shouldn't need to deploy this, but for documentation purposes, here goes!
 
 First, go to [your account page on Heroku](https://dashboard.heroku.com/account) and under 'API Clients' click the 'Register API Client' button.
 
