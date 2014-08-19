@@ -13,6 +13,7 @@ class CityvoiceBuilderHeroku < Sinatra::Base
 
   configure do
     set :redis_url, URI.parse(ENV["REDISTOGO_URL"])
+    set :expiration_time, 600
     # Usage:
     # redis.set("keyname", "value")
     # redis.get("keyname")
@@ -38,6 +39,7 @@ class CityvoiceBuilderHeroku < Sinatra::Base
     redis = Redis.new(:url => settings.redis_url)
     key_for_locations = "#{params[:user_token]}_locations"
     redis.set(key_for_locations, params[:locations].to_json)
+    redis.expire(key_for_locations, settings.expiration_time)
     redirect to("/#{params[:user_token]}/questions"), 303
     # For eventual location name-editing
     #redirect to('/locations/edit'), 303
@@ -71,6 +73,7 @@ class CityvoiceBuilderHeroku < Sinatra::Base
     redis = Redis.new(:url => settings.redis_url)
     key_for_questions = "#{params[:user_token]}_questions"
     redis.set(key_for_questions, clean_questions.to_json)
+    redis.expire(key_for_questions, settings.expiration_time)
     redirect to("/#{params[:user_token]}/tarball"), 302
     # Do audio later
     #redirect to('/audio')
@@ -139,6 +142,7 @@ class CityvoiceBuilderHeroku < Sinatra::Base
     # Store tarball in Redis
     raw_custom_tarball_binary = IO.binread(custom_tarball_path)
     redis.set("#{token}_tarball", raw_custom_tarball_binary)
+    redis.expire("#{token}_tarball", settings.expiration_time)
     redirect to("/#{params[:user_token]}/push"), 302
   end
 
