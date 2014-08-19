@@ -2,16 +2,28 @@
 
 ## Deployment
 
-Set your OAuth ID (from Heroku):
+Non-CFA users shouldn't need to deploy this yourself, but for documentation purposes, here goes!
+
+First, go to [your account page on Heroku](https://dashboard.heroku.com/account) and under 'API Clients' click the 'Register API Client' button.
+
+There, set the Name (whatever you want) and the OAuth Callback URL (this will be /callback on your deployment, for example: https://my-cityvoice-builder-instance.herokuapp.com/callback )
+
+Once you've done that, note the 'ID' and 'SECRET' it gives you.
+
+Now, clone this repo and `cd` into the folder. From there, create a Heroku app with your own name:
+
+    $ heroku create my-cityvoice-builder-name
+
+Now, configure your Builder app with the ID and SECRET from above:
 
     $ heroku config:set HEROKU_OAUTH_ID=lolmyoauthid
     $ heroku config:set HEROKU_OAUTH_SECRET=lolmysecret
 
-Push:
+Now push!
 
     $ git push heroku master
 
-Provision Heroku's RedisToGo add-on:
+Lastly, provision Heroku's RedisToGo add-on:
 
     $ heroku addons:add redistogo:small
 
