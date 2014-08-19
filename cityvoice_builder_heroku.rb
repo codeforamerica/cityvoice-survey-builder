@@ -12,7 +12,7 @@ class CityvoiceBuilderHeroku < Sinatra::Base
   enable :sessions
 
   configure do
-    set :redis, Redis.new(:host => ENV['REDISTOGO_URL'])
+    set :redis_url, URI.parse(ENV["REDISTOGO_URL"])
     # Usage:
     # redis.set("keyname", "value")
     # redis.get("keyname")
@@ -35,7 +35,7 @@ class CityvoiceBuilderHeroku < Sinatra::Base
   end
 
   post '/:user_token/locations' do
-    redis = Redis.new(:host => ENV['REDISTOGO_URL'])
+    redis = Redis.new(:url => settings.redis_url)
     key_for_locations = "#{params[:user_token]}_locations"
     redis.set(key_for_locations, params[:locations].to_json)
     redirect to("/#{params[:user_token]}/questions"), 303
@@ -68,7 +68,7 @@ class CityvoiceBuilderHeroku < Sinatra::Base
       q["short_name"] != ""
     end
     clean_questions["voice_question_text"] = params[:questions]["voice_question_text"]
-    redis = Redis.new(:host => ENV['REDISTOGO_URL'])
+    redis = Redis.new(:url => settings.redis_url)
     key_for_questions = "#{params[:user_token]}_questions"
     redis.set(key_for_questions, clean_questions.to_json)
     redirect to("/#{params[:user_token]}/tarball"), 302
@@ -89,7 +89,7 @@ class CityvoiceBuilderHeroku < Sinatra::Base
   end
 
   get '/:user_token/tarball/download' do
-    redis = Redis.new(:host => ENV['REDISTOGO_URL'])
+    redis = Redis.new(:url => settings.redis_url)
     binary = redis.get("#{params[:user_token]}_tarball")
     tarball_path = "/tmp/tmp_custom_tarball_#{params[:user_token]}.tar.gz"
     FileUtils.rm_rf(tarball_path)
@@ -101,7 +101,7 @@ class CityvoiceBuilderHeroku < Sinatra::Base
 
   post '/:user_token/tarball/build' do
     token = params[:user_token]
-    redis = Redis.new(:host => ENV['REDISTOGO_URL'])
+    redis = Redis.new(:url => settings.redis_url)
     # Get JSON data out of Redis
     # Parse JSON from Redis into Ruby hashes
     locations = JSON.parse(redis.get("#{params[:user_token]}_locations"))
