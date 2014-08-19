@@ -7,6 +7,8 @@ require 'fileutils'
 require File.expand_path('../lib/cityvoice_csv_generator', __FILE__)
 
 class CityvoiceBuilderHeroku < Sinatra::Base
+  raise "Need to set HEROKU_OAUTH_ID" unless ENV.has_key?('HEROKU_OAUTH_ID')
+  raise "Need to set HEROKU_OAUTH_SECRET" unless ENV.has_key?('HEROKU_OAUTH_SECRET')
   enable :sessions
 
   configure do
