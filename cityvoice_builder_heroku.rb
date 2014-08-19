@@ -3,12 +3,17 @@ require 'httparty'
 require 'json'
 require 'redis'
 require 'securerandom'
+require 'fileutils'
+require File.expand_path('../lib/cityvoice_csv_generator', __FILE__)
 
 class CityvoiceBuilderHeroku < Sinatra::Base
+  raise "Need to set HEROKU_OAUTH_ID" unless ENV.has_key?('HEROKU_OAUTH_ID')
+  raise "Need to set HEROKU_OAUTH_SECRET" unless ENV.has_key?('HEROKU_OAUTH_SECRET')
   enable :sessions
 
   configure do
-    set :redis, Redis.new(:host => ENV['REDISTOGO_URL'])
+    set :redis_url, URI.parse(ENV["REDISTOGO_URL"])
+    set :expiration_time, 600
     # Usage:
     # redis.set("keyname", "value")
     # redis.get("keyname")
@@ -31,9 +36,10 @@ class CityvoiceBuilderHeroku < Sinatra::Base
   end
 
   post '/:user_token/locations' do
-    redis = Redis.new(:host => ENV['REDISTOGO_URL'])
+    redis = Redis.new(:url => settings.redis_url)
     key_for_locations = "#{params[:user_token]}_locations"
     redis.set(key_for_locations, params[:locations].to_json)
+    redis.expire(key_for_locations, settings.expiration_time)
     redirect to("/#{params[:user_token]}/questions"), 303
     # For eventual location name-editing
     #redirect to('/locations/edit'), 303
@@ -59,9 +65,15 @@ class CityvoiceBuilderHeroku < Sinatra::Base
   end
 
   post '/:user_token/questions' do
-    redis = Redis.new(:host => ENV['REDISTOGO_URL'])
+    clean_questions = Hash.new
+    clean_questions["agree_questions"] = params[:questions]["agree_questions"].select do |q|
+      q["short_name"] != ""
+    end
+    clean_questions["voice_question_text"] = params[:questions]["voice_question_text"]
+    redis = Redis.new(:url => settings.redis_url)
     key_for_questions = "#{params[:user_token]}_questions"
-    redis.set(key_for_questions, params[:questions].to_json)
+    redis.set(key_for_questions, clean_questions.to_json)
+    redis.expire(key_for_questions, settings.expiration_time)
     redirect to("/#{params[:user_token]}/tarball"), 302
     # Do audio later
     #redirect to('/audio')
@@ -79,28 +91,73 @@ class CityvoiceBuilderHeroku < Sinatra::Base
     erb :tarball
   end
 
+  get '/:user_token/tarball/download' do
+    redis = Redis.new(:url => settings.redis_url)
+    binary = redis.get("#{params[:user_token]}_tarball")
+    tarball_path = "/tmp/tmp_custom_tarball_#{params[:user_token]}.tar.gz"
+    FileUtils.rm_rf(tarball_path)
+    File.open(tarball_path, 'wb') do |file|
+      file.write(binary)
+    end
+    send_file(tarball_path, :filename => "cityvoice_custom_tarball_#{params[:user_token]}.tar.gz")
+  end
+
   post '/:user_token/tarball/build' do
-    redis = Redis.new(:host => ENV['REDISTOGO_URL'])
-    locations = redis.get("#{params[:user_token]}_locations")
-    questions = redis.get("#{params[:user_token]}_questions")
+    token = params[:user_token]
+    redis = Redis.new(:url => settings.redis_url)
+    # Get JSON data out of Redis
+    # Parse JSON from Redis into Ruby hashes
+    locations = JSON.parse(redis.get("#{params[:user_token]}_locations"))
+    questions = JSON.parse(redis.get("#{params[:user_token]}_questions"))
+    locations_csv_string = CityvoiceCsvGenerator.locations_csv(locations)
+    questions_csv_string = CityvoiceCsvGenerator.questions_csv(questions)
+    # Download latest CityVoice Tarball from GitHub to /tmp
+    source_tarball = HTTParty.get("http://github.com/codeforamerica/cityvoice/tarball/master")
+    tarball_path = "/tmp/cityvoice_source_from_github_#{token}.tar.gz"
+    FileUtils.rm_rf(tarball_path)
+    File.open(tarball_path, "w") do |file|
+      file.write(source_tarball)
+    end
+    # Extract tarball to folder in tmp
+    destination_path = "/tmp/cityvoice_source_decompressed_#{token}"
+    FileUtils.rm_rf(destination_path)
+    FileUtils.mkdir(destination_path)
+    system("tar -zxvf #{tarball_path} -C #{destination_path}")
+    path_to_repo = Dir[destination_path + "/*"][0]
+    # Delete CSV files in tmp folder
+    locations_csv_path = "#{path_to_repo}/data/locations.csv"
+    questions_csv_path = "#{path_to_repo}/data/questions.csv"
+    File.delete(locations_csv_path)
+    File.delete(questions_csv_path)
+    # Write new CSV files in tmp folder
+    File.open(locations_csv_path, 'w') do |file|
+      file.write(locations_csv_string)
+    end
+    File.open(questions_csv_path, 'w') do |file|
+      file.write(questions_csv_string)
+    end
+    # Create tarball of tmp folder
+    custom_tarball_path = "/tmp/cityvoice_custom_tarball_#{token}.tar.gz"
+    system("tar -C #{path_to_repo} -pczf #{custom_tarball_path} .")
+    # Store tarball in Redis
+    raw_custom_tarball_binary = IO.binread(custom_tarball_path)
+    redis.set("#{token}_tarball", raw_custom_tarball_binary)
+    redis.expire("#{token}_tarball", settings.expiration_time)
+    redirect to("/#{params[:user_token]}/push"), 302
   end
 
   get '/:user_token/push' do
-    @page_name = 'push'
-    erb :push
-  end
-
-  get '/create-app' do
-    raise "Need to set HEROKU_OAUTH_ID" unless ENV.has_key?('HEROKU_OAUTH_ID')
     @heroku_authorize_url = "https://id.heroku.com/oauth/authorize?" \
       + "client_id=#{ENV['HEROKU_OAUTH_ID']}" \
       + "&response_type=code" \
       + "&scope=global" \
-      + "&state="
+      + "&state=#{params[:user_token]}"
+    @page_name = 'push'
     erb :push
   end
 
   get '/callback' do
+    tarball_url = "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}/#{params[:state]}/tarball/download"
     @token_exchange_response = HTTParty.post("https://id.heroku.com/oauth/token", \
       query: { \
         grant_type: "authorization_code", \
@@ -113,7 +170,7 @@ class CityvoiceBuilderHeroku < Sinatra::Base
         "Accept" => "application/vnd.heroku+json; version=3", \
         "Content-Type" => "application/json" \
       }, \
-      body: "{\"source_blob\": { \"url\": \"https://github.com/daguar/cityvoice/tarball/add-heroku-app-json-file\"}}")
+      body: "{\"source_blob\": { \"url\": \"#{tarball_url}\"}}")
     @built_app_url = "https://#{JSON.parse(@app_build_response.body)["app"]["name"]}.herokuapp.com"
     erb :response
   end
