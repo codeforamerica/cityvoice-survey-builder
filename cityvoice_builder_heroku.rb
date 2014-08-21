@@ -157,7 +157,7 @@ class CityvoiceBuilderHeroku < Sinatra::Base
   end
 
   get '/callback' do
-    tarball_url = "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}/#{params[:state]}/tarball/download"
+    tarball_url = "https://#{request.env['HTTP_HOST']}/#{params[:state]}/tarball/download"
     @token_exchange_response = HTTParty.post("https://id.heroku.com/oauth/token", \
       query: { \
         grant_type: "authorization_code", \
