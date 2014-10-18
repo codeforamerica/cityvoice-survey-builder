@@ -112,7 +112,7 @@ class CityvoiceBuilderHeroku < Sinatra::Base
     locations_csv_string = CityvoiceCsvGenerator.locations_csv(locations)
     questions_csv_string = CityvoiceCsvGenerator.questions_csv(questions)
     # Download latest CityVoice Tarball from GitHub to /tmp
-    source_tarball = HTTParty.get("http://github.com/codeforamerica/cityvoice/tarball/master")
+    source_tarball = HTTParty.get("http://github.com/daguar/cityvoice/tarball/dont-raise-without-secret-token")
     tarball_path = "/tmp/cityvoice_source_from_github_#{token}.tar.gz"
     FileUtils.rm_rf(tarball_path)
     File.open(tarball_path, "w") do |file|
