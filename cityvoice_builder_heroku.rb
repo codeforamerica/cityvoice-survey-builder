@@ -112,7 +112,7 @@ class CityvoiceBuilderHeroku < Sinatra::Base
     locations_csv_string = CityvoiceCsvGenerator.locations_csv(locations)
     questions_csv_string = CityvoiceCsvGenerator.questions_csv(questions)
     # Download latest CityVoice Tarball from GitHub to /tmp
-    source_tarball = HTTParty.get("http://github.com/daguar/cityvoice/tarball/dont-raise-without-secret-token")
+    source_tarball = HTTParty.get("http://github.com/daguar/cityvoice/tarball/bump-to-ruby-213")
     tarball_path = "/tmp/cityvoice_source_from_github_#{token}.tar.gz"
     FileUtils.rm_rf(tarball_path)
     File.open(tarball_path, "w") do |file|
@@ -170,7 +170,7 @@ class CityvoiceBuilderHeroku < Sinatra::Base
         "Accept" => "application/vnd.heroku+json; version=edge", \
         "Content-Type" => "application/json" \
       }, \
-      body: "{\"source_blob\": { \"url\": \"#{tarball_url}\"}, \"app\": { \"stack\": \"cedar\" } }")
+      body: "{\"source_blob\": { \"url\": \"#{tarball_url}\"} }")
     #@built_app_url = "https://#{JSON.parse(@app_build_response.body)["app"]["name"]}.herokuapp.com"
     erb :response
   end
