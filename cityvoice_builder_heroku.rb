@@ -74,7 +74,7 @@ class CityvoiceBuilderHeroku < Sinatra::Base
     key_for_questions = "#{params[:user_token]}_questions"
     redis.set(key_for_questions, clean_questions.to_json)
     redis.expire(key_for_questions, settings.expiration_time)
-    redirect to("/#{params[:user_token]}/tarball"), 302
+    redirect to("/#{params[:user_token]}/tarball/build"), 303
     # Do audio later
     #redirect to('/audio')
   end
@@ -87,10 +87,6 @@ class CityvoiceBuilderHeroku < Sinatra::Base
   end
 =end
 
-  get '/:user_token/tarball' do
-    erb :tarball
-  end
-
   get '/:user_token/tarball/download' do
     redis = Redis.new(:url => settings.redis_url)
     binary = redis.get("#{params[:user_token]}_tarball")
@@ -102,7 +98,7 @@ class CityvoiceBuilderHeroku < Sinatra::Base
     send_file(tarball_path, :filename => "cityvoice_custom_tarball_#{params[:user_token]}.tar.gz")
   end
 
-  post '/:user_token/tarball/build' do
+  get '/:user_token/tarball/build' do
     token = params[:user_token]
     redis = Redis.new(:url => settings.redis_url)
     # Get JSON data out of Redis
