@@ -1,5 +1,12 @@
 <% if @built_app_url %>
-Your app will be available in about 30 seconds at: <%= @built_app_url %>
+<h2>Success!</h2>
+<p>
+  Your app will be available in about 60 seconds at:
+  <br>
+  <a href="<%= @built_app_url %>"><%= @built_app_url %></a>
+</p>
 <% else %>
+<p>
 Uh oh! Something broke. We've logged the problem, but please email <a href="mailto:dave@codeforamerica.org">dave@codeforamerica.org</a> to get help.
+</p>
 <% end %>
