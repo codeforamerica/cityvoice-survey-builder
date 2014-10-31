@@ -1,12 +1,12 @@
-Your app will be available in about 30 seconds at:
-<br>
-<br><br><br>
-<h3>Technical details</h3>
-<br><br>
-Token exchange response:
-<br><br>
-<%= @token_exchange_response %>
-<br><br>
-App build response:
-<%= @app_build_response %>
-
+<% if @built_app_url %>
+<h2>Success!</h2>
+<p>
+  Your app will be available in about 60 seconds at:
+  <br>
+  <a href="<%= @built_app_url %>"><%= @built_app_url %></a>
+</p>
+<% else %>
+<p>
+Uh oh! Something broke. We've logged the problem, but please email <a href="mailto:dave@codeforamerica.org">dave@codeforamerica.org</a> to get help.
+</p>
+<% end %>
