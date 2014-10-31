@@ -1,12 +1,5 @@
-Your app will be available in about 30 seconds at:
-<br>
-<br><br><br>
-<h3>Technical details</h3>
-<br><br>
-Token exchange response:
-<br><br>
-<%= @token_exchange_response %>
-<br><br>
-App build response:
-<%= @app_build_response %>
-
+<% if @built_app_url %>
+Your app will be available in about 30 seconds at: <%= @built_app_url %>
+<% else %>
+Uh oh! Something broke. We've logged the problem, but please email <a href="mailto:dave@codeforamerica.org">dave@codeforamerica.org</a> to get help.
+<% end %>
