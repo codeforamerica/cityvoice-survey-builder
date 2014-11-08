@@ -1,0 +1,79 @@
+<link type='text/css' href='css/modal.css' rel='stylesheet' media='screen' />
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script type='text/javascript' src='js/jquery.simplemodal-1.4.4.js'></script>
+
+<h2>Sign Up</h2>
+
+<p>
+First, you'll need to create (free) accounts for the two services that power CityVoice: Twilio and Heroku.
+</p>
+
+<div id="twilio-button" class="button-prominent">
+Create a Twilio account
+</div>
+
+<br><br>
+
+<div id="heroku-button" class="button-prominent">
+Create a Heroku account
+</div>
+
+<p>
+When you're done, click "Next" below to continue.
+</p>
+
+<form name="input" action="/deployment/new" method="post">
+<input type="submit" value="Next">
+</form>
+
+<div id="heroku-modal-content">
+<h4>Create a Heroku account</h4>
+<ol>
+  <li>Click <a href="https://signup.heroku.com/www-home-top" target="_blank" class="button">here</a>to open a new tab with the Heroku sign-up page</li>
+  <li>Create a new account with your email address</li>
+  <li>Check your email for a confirmation from Heroku, and follow the link there to set your password</li>
+</ol>
+<p>
+When you're done, click anywhere outside this help window to close it.
+</p>
+</div>
+
+<div id="twilio-modal-content">
+<h4>Create a Twilio account</h4>
+<ol>
+  <li>Click <a href="https://www.twilio.com/try-twilio" target="_blank" class="button">here</a>to open a new tab with the Twilio sign-up page</li>
+  <li>Fill out the sign-up form and follow their instructions for verifying your account</li>
+  <li>When you see this:
+  <img src="/img/twilio-first-phone-number.png" style="border: solid; display: block; margin-left: auto; margin-right: auto;">
+  Click <strong>"Get started"</strong> and come back to this page</li>
+</ol>
+<p>
+When you're done, click anywhere outside this help window to close it.
+</p>
+</div>
+
+<script>
+  jQuery(function ($) {
+    // Load dialog on page load
+    //$('#basic-modal-content').modal();
+
+    // Load dialog on click
+    $('#twilio-button').click(function (e) {
+      $('#twilio-modal-content').modal({
+        overlayClose: true
+      });
+      return false;
+    });
+    $('#heroku-button').click(function (e) {
+      $('#heroku-modal-content').modal({
+        overlayClose: true
+      });
+      return false;
+    });
+  });
+</script>
+
+<style>
+#twilio-modal-content {display:none;}
+</style>
