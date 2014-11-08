@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<<!DOCTYPE html>
 <html lang="en">
 <head>
 
@@ -50,6 +50,7 @@
             <h2>Steps</h2>
             <ol class="sectlevel1">
                 <div id="steps-container">
+                  <li id="locations-step" <%= "class='step-selected'" if @page_name == 'signup' %>>Sign up</li>
                   <li id="locations-step" <%= "class='step-selected'" if @page_name == 'locations' %>>Add locations</li>
                   <li id="questions-step" <%= "class='step-selected'" if @page_name == 'questions' %>>Add questions</li>
                   <li id="audio-step" <%= "class='step-selected'" if @page_name == 'audio' %>>Record audio</a></li>

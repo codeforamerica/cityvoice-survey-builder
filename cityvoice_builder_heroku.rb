@@ -25,6 +25,11 @@ class CityvoiceBuilderHeroku < Sinatra::Base
     erb :index
   end
 
+  get '/signup' do
+    @page_name = 'signup'
+    erb :signup
+  end
+
   post '/deployment/new' do
     user_token = SecureRandom.hex
     redirect to("/#{user_token}/locations")

@@ -1,10 +1,36 @@
 <% if @built_app_url %>
 <h2>Success!</h2>
 <p>
-  Your app will be available in about 60 seconds at:
+  Your CityVoice site will be available in about 60 seconds at:
   <br>
   <a href="<%= @built_app_url %>" target="_blank"><%= @built_app_url %></a>
 </p>
+<p>
+This is your "URL". We'll use it for the last step.
+</p>
+
+<h2>Connect your phone number</h2>
+<p>
+Hooray! The last step is to hook up your Twilio phone number to CityVoice.
+</p>
+<p>
+First click <a href="https://www.twilio.com/user/account/phone-numbers/incoming" class="button">configure number</a> to go to your Twilio page.
+</p>
+<p>
+Then, click on the phone number:
+</p>
+<img src="/img/twilio-numbers-page.png">
+<p>
+Lastly, copy and paste your URL from above into Voice section's "Request URL" field and add <strong>/calls</strong> onto the end, like the example below. When done, click "Save".
+</p>
+<img src="/img/twilio-configure-phone-number.png">
+
+
+<h2>Congratulations</h2>
+<p>
+You're done! Call your phone number to experience your new CityVoice survey! When asked for a call-in code, you can use "001".
+</p>
+
 <% else %>
 <p>
 Uh oh! Something broke. We've logged the problem, but please email <a href="mailto:dave@codeforamerica.org">dave@codeforamerica.org</a> to get help.
