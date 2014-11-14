@@ -1,10 +1,13 @@
 <a href="push" class="button"></a>
 
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script type='text/javascript' src='/js/jquery.simplemodal-1.4.4.js'></script>
+<link type='text/css' href='/css/modal.css' rel='stylesheet' media='screen' />
 
 <style type='text/css'>
   ul { list-style: none; }
   #recordingslist audio { display: block; margin-bottom: 10px; }
+  #please-wait-modal-content { display: none; }
 </style>
 
 <h1>Recorder.js simple WAV export example</h1>
@@ -15,8 +18,12 @@
 <button onclick="startRecording(this);">record</button>
 <button onclick="stopRecording(this);" disabled>stop</button>
 
-<h2>Recordings</h2>
-<ul id="recordingslist"></ul>
+<div id="recordingslist"></div>
+<button id="uploadButton" onclick="uploadAudio(this); disabled">upload</div>
+
+<div id="please-wait-modal-content">
+  Thanks! Please wait while your audio uploads (this may take up to a minute).
+</div>
 
 <script>
 function __log(e, data) {
@@ -50,13 +57,24 @@ function startRecording(button) {
 function stopRecording(button) {
   recorder && recorder.stop();
   button.disabled = true;
-  button.previousElementSibling.disabled = false;
+  button.previousElementSibling.disabled = true;
+  uploadButton = document.getElementById("uploadButton");
+  uploadButton.disabled = false;
   __log('Stopped recording.');
 
-  // create WAV download link using audio data blob
-  createDownloadLink();
+  createPlayer();
 
-  recorder.exportWAV(function(blob) {
+/*
+*/
+
+  //recorder.clear();
+}
+
+function uploadAudio(e) {
+  $('#please-wait-modal-content').modal({
+    overlayClose: true
+  });
+  recorder && recorder.exportWAV(function(blob) {
     console.log("sending data");
     console.log(blob);
     var fd = new FormData();
@@ -68,27 +86,21 @@ function stopRecording(button) {
       data: fd,
       processData: false,
       contentType: false
-      }).done(function(response) { console.log(response); });
+      }).done(function(response) {
+        console.log(response);
+        alert("all done!");
+      });
   });
-
-  recorder.clear();
 }
 
-function createDownloadLink() {
+function createPlayer() {
   recorder && recorder.exportWAV(function(blob) {
     var url = URL.createObjectURL(blob);
-    var li = document.createElement('li');
     var au = document.createElement('audio');
-    var hf = document.createElement('a');
 
     au.controls = true;
     au.src = url;
-    hf.href = url;
-    hf.download = new Date().toISOString() + '.wav';
-    hf.innerHTML = hf.download;
-    li.appendChild(au);
-    li.appendChild(hf);
-    recordingslist.appendChild(li);
+    recordingslist.appendChild(au);
   });
 }
 
