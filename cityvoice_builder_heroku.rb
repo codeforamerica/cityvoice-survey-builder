@@ -84,13 +84,20 @@ class CityvoiceBuilderHeroku < Sinatra::Base
     #redirect to('/audio')
   end
 
-# Do audio later
-=begin
   get '/audio' do
     @page_name = 'audio'
     erb :audio
   end
-=end
+
+  post '/saveblobtotmp' do
+    puts params["data"]
+    hex = SecureRandom.hex
+    system("cp #{params["data"][:tempfile].path} /tmp/tempwave_#{hex}.wav")
+    #File.open("/tmp/blob_#{hex}.wav", 'wb') do |file|
+    #  file.write(params["data"])
+    #end
+    return "blob saved!"
+  end
 
   get '/:user_token/tarball/download' do
     redis = Redis.new(:url => settings.redis_url)
