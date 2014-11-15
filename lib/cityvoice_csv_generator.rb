@@ -15,7 +15,7 @@ module CityvoiceCsvGenerator
       questions["agree_questions"].each do |q|
         csv << [q["short_name"], "numerical_response", q["question_text"]]
       end
-      csv << ["Voice Question", "voice_file", questions["voice_question_text"]]
+      csv << ["voice_question", "voice_file", questions["voice_question_text"]]
     end
     csv_string
   end

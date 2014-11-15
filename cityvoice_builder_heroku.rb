@@ -88,8 +88,12 @@ class CityvoiceBuilderHeroku < Sinatra::Base
     @user_token = params[:user_token]
     redis = Redis.new(:url => settings.redis_url)
     questions = JSON.parse(redis.get("#{params[:user_token]}_questions"))
-    puts questions
-    audio_names = %w(welcome thanks)
+    question_short_names = Array.new
+    question_short_names += questions["agree_questions"].map { |q| q["short_name"] }
+    question_short_names += ['voice_question']
+    audio_names = %w(welcome consent)
+    audio_names += question_short_names
+    audio_names += %w(fatal_error thanks)
     @current_audio_name = params[:current_audio_name]
     puts @current_audio_name
     current_audio_index = audio_names.index(@current_audio_name)
