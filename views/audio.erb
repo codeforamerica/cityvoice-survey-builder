@@ -1,5 +1,3 @@
-<a href="push" class="button"></a>
-
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script type='text/javascript' src='/js/jquery.simplemodal-1.4.4.js'></script>
 <link type='text/css' href='/css/modal.css' rel='stylesheet' media='screen' />
@@ -8,17 +6,23 @@
   ul { list-style: none; }
   #recordingslist audio { display: block; margin-bottom: 10px; }
   #please-wait-modal-content { display: none; }
+  #postrecordingdiv { display: none; }
 </style>
 
-<h1>Record "<%= @current_audio_name %>"</h1>
+<h2>Record "<%= @current_audio_name %>"</h2>
 
 <p></p>
 
-<button onclick="startRecording(this);">record</button>
-<button onclick="stopRecording(this);" disabled>stop</button>
+<div id="prerecordingdiv">
+  <button onclick="startRecording(this);">record</button>
+  <button class="button-prominent" onclick="stopRecording(this);" disabled>stop</button>
+</div>
 
-<div id="recordingslist"></div>
-<button id="uploadButton" onclick="uploadAudio(this); disabled">upload</div>
+<div id="postrecordingdiv">
+  <div id="recordingslist"></div>
+  <button id="uploadButton" onclick="uploadAudio(this);" disabled>upload</button>
+  <button class="button-prominent" id="rerecordButton" onclick="location.reload();" disabled>re-record</button>
+</div>
 
 <div id="please-wait-modal-content">
   Thanks! Please wait while your audio is processed...
@@ -63,6 +67,12 @@ function stopRecording(button) {
   button.previousElementSibling.disabled = true;
   uploadButton = document.getElementById("uploadButton");
   uploadButton.disabled = false;
+  rerecordButton = document.getElementById("rerecordButton");
+  rerecordButton.disabled = false;
+  prerecordingdiv = document.getElementById("prerecordingdiv");
+  prerecordingdiv.style.display = 'none';
+  postrecordingdiv = document.getElementById("postrecordingdiv");
+  postrecordingdiv.style.display = 'inline';
   __log('Stopped recording.');
 
   createPlayer();
@@ -105,6 +115,7 @@ function createPlayer() {
 
     au.controls = true;
     au.src = url;
+    recordingslist.innerHTML = '';
     recordingslist.appendChild(au);
   });
 }
