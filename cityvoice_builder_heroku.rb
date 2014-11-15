@@ -169,11 +169,18 @@ class CityvoiceBuilderHeroku < Sinatra::Base
       file.write(questions_csv_string)
     end
     ### Audio
-    audio_file_names = %w(welcome thanks)
+    question_short_names = Array.new
+    question_short_names += questions["agree_questions"].map { |q| q["short_name"] }
+    question_short_names += ['voice_question']
+    audio_file_names = %w(welcome consent)
+    audio_file_names += question_short_names
+    audio_file_names += %w(fatal_error thanks)
     audio_file_names.each do |audio_name|
       # Delete audio
       audio_path = "#{path_to_repo}/app/assets/audios/#{audio_name}.mp3"
-      FileUtils.rm_rf(audio_path)
+      if File.exist?(audio_path)
+        FileUtils.rm_rf(audio_path)
+      end
       # Take out binary from redis for audio
       binary = redis.get("#{params[:user_token]}_audio_#{audio_name}")
       # Write new mp3 audio to file
