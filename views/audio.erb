@@ -22,7 +22,11 @@
 <button id="uploadButton" onclick="uploadAudio(this); disabled">upload</div>
 
 <div id="please-wait-modal-content">
-  Thanks! Please wait while your audio uploads (this may take up to a minute).
+  Thanks! Please wait while your audio is processed...
+  <br>
+</div>
+
+<div id="next-modal">
 </div>
 
 <script>
@@ -82,13 +86,15 @@ function uploadAudio(e) {
     fd.append('data', blob);
     $.ajax({
       type: "POST",
-      url: "/saveblobtotmp",
+      url: "/<%= @user_token %>/audio",
       data: fd,
       processData: false,
       contentType: false
       }).done(function(response) {
         console.log(response);
-        alert("all done!");
+        //alert("all done!");
+        done_content = "<br>Done! Click next below to continue.<br><a href=\"/<%= @user_token %>/tarball/build\" class=\"button\">Next</a>";
+        $('#please-wait-modal-content').append(done_content);
       });
   });
 }
@@ -108,7 +114,10 @@ window.onload = function init() {
   try {
     // webkit shim
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
-    navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia;
+    navigator.getUserMedia = (navigator.getUserMedia ||
+      navigator.webkitGetUserMedia ||
+      navigator.mozGetUserMedia ||
+      navigator.msGetUserMedia);
     window.URL = window.URL || window.webkitURL;
 
     audio_context = new AudioContext;

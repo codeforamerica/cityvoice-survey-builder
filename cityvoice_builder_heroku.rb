@@ -79,23 +79,30 @@ class CityvoiceBuilderHeroku < Sinatra::Base
     key_for_questions = "#{params[:user_token]}_questions"
     redis.set(key_for_questions, clean_questions.to_json)
     redis.expire(key_for_questions, settings.expiration_time)
-    redirect to("/#{params[:user_token]}/tarball/build"), 303
-    # Do audio later
-    #redirect to('/audio')
+    #redirect to("/#{params[:user_token]}/tarball/build"), 303
+    redirect to("/#{params[:user_token]}/audio"), 303
   end
 
-  get '/audio' do
+  get '/:user_token/audio' do
+    @user_token = params[:user_token]
     @page_name = 'audio'
     erb :audio
   end
 
-  post '/saveblobtotmp' do
-    puts params["data"]
-    hex = SecureRandom.hex
-    system("cp #{params["data"][:tempfile].path} /tmp/tempwave_#{hex}.wav")
-    #File.open("/tmp/blob_#{hex}.wav", 'wb') do |file|
-    #  file.write(params["data"])
-    #end
+  post '/:user_token/audio' do
+    audio_name = "welcome"
+    user_token = params[:user_token]
+    wav_path = params["data"][:tempfile].path
+    mp3_path = "/tmp/#{user_token}_audio_#{audio_name}.mp3"
+    # Convert wav to mp3
+    system("lame -V 2 #{wav_path} #{mp3_path}")
+    # Read mp3 as binary and put in Redis
+    raw_mp3_binary_data = IO.binread(mp3_path)
+    redis = Redis.new(:url => settings.redis_url)
+    redis_key = "#{user_token}_audio_#{audio_name}"
+    redis.set(redis_key, raw_mp3_binary_data)
+    redis.expire(redis_key, settings.expiration_time)
+    puts "Redis key: #{redis_key}"
     return "blob saved!"
   end
 
@@ -143,6 +150,17 @@ class CityvoiceBuilderHeroku < Sinatra::Base
     end
     File.open(questions_csv_path, 'w') do |file|
       file.write(questions_csv_string)
+    end
+    ### Audio
+    # Delete audio
+    audio_name = "welcome"
+    audio_path = "#{path_to_repo}/app/assets/audios/#{audio_name}.mp3"
+    FileUtils.rm_rf(audio_path)
+    # Take out binary from redis for audio
+    binary = redis.get("#{params[:user_token]}_audio_#{audio_name}")
+    # Write new mp3 audio to file
+    File.open(audio_path, 'wb') do |file|
+      file.write(binary)
     end
     # Create tarball of tmp folder
     custom_tarball_path = "/tmp/cityvoice_custom_tarball_#{token}.tar.gz"
