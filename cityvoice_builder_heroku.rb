@@ -80,17 +80,30 @@ class CityvoiceBuilderHeroku < Sinatra::Base
     redis.set(key_for_questions, clean_questions.to_json)
     redis.expire(key_for_questions, settings.expiration_time)
     #redirect to("/#{params[:user_token]}/tarball/build"), 303
-    redirect to("/#{params[:user_token]}/audio"), 303
+    redirect to("/#{params[:user_token]}/audio/welcome"), 303
   end
 
-  get '/:user_token/audio' do
-    @user_token = params[:user_token]
+  get '/:user_token/audio/:current_audio_name' do
     @page_name = 'audio'
+    @user_token = params[:user_token]
+    redis = Redis.new(:url => settings.redis_url)
+    questions = JSON.parse(redis.get("#{params[:user_token]}_questions"))
+    puts questions
+    audio_names = %w(welcome thanks)
+    @current_audio_name = params[:current_audio_name]
+    puts @current_audio_name
+    current_audio_index = audio_names.index(@current_audio_name)
+    if @current_audio_name == "thanks"
+      @next_link = "/#{@user_token}/tarball/build"
+    else
+      next_audio_name = audio_names[current_audio_index + 1]
+      @next_link = "/#{@user_token}/audio/#{next_audio_name}"
+    end
     erb :audio
   end
 
-  post '/:user_token/audio' do
-    audio_name = "welcome"
+  post '/:user_token/audio/:current_audio_name' do
+    audio_name = params[:current_audio_name]
     user_token = params[:user_token]
     wav_path = params["data"][:tempfile].path
     mp3_path = "/tmp/#{user_token}_audio_#{audio_name}.mp3"
@@ -152,15 +165,17 @@ class CityvoiceBuilderHeroku < Sinatra::Base
       file.write(questions_csv_string)
     end
     ### Audio
-    # Delete audio
-    audio_name = "welcome"
-    audio_path = "#{path_to_repo}/app/assets/audios/#{audio_name}.mp3"
-    FileUtils.rm_rf(audio_path)
-    # Take out binary from redis for audio
-    binary = redis.get("#{params[:user_token]}_audio_#{audio_name}")
-    # Write new mp3 audio to file
-    File.open(audio_path, 'wb') do |file|
-      file.write(binary)
+    audio_file_names = %w(welcome thanks)
+    audio_file_names.each do |audio_name|
+      # Delete audio
+      audio_path = "#{path_to_repo}/app/assets/audios/#{audio_name}.mp3"
+      FileUtils.rm_rf(audio_path)
+      # Take out binary from redis for audio
+      binary = redis.get("#{params[:user_token]}_audio_#{audio_name}")
+      # Write new mp3 audio to file
+      File.open(audio_path, 'wb') do |file|
+        file.write(binary)
+      end
     end
     # Create tarball of tmp folder
     custom_tarball_path = "/tmp/cityvoice_custom_tarball_#{token}.tar.gz"

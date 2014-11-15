@@ -10,10 +10,9 @@
   #please-wait-modal-content { display: none; }
 </style>
 
-<h1>Recorder.js simple WAV export example</h1>
+<h1>Record "<%= @current_audio_name %>"</h1>
 
-<p>Make sure you are using a recent version of Google Chrome.</p>
-<p>Also before you enable microphone input either plug in headphones or turn the volume down if you want to avoid ear splitting feedback!</p>
+<p></p>
 
 <button onclick="startRecording(this);">record</button>
 <button onclick="stopRecording(this);" disabled>stop</button>
@@ -86,14 +85,14 @@ function uploadAudio(e) {
     fd.append('data', blob);
     $.ajax({
       type: "POST",
-      url: "/<%= @user_token %>/audio",
+      url: "/<%= @user_token %>/audio/<%= @current_audio_name %>",
       data: fd,
       processData: false,
       contentType: false
       }).done(function(response) {
         console.log(response);
         //alert("all done!");
-        done_content = "<br>Done! Click next below to continue.<br><a href=\"/<%= @user_token %>/tarball/build\" class=\"button\">Next</a>";
+        done_content = "<br>Done! Click next below to continue.<br><a href=\"<%= @next_link %>\" class=\"button\">Next</a>";
         $('#please-wait-modal-content').append(done_content);
       });
   });
