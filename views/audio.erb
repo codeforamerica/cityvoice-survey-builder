@@ -7,6 +7,7 @@
   #recordingslist audio { display: block; margin-bottom: 10px; }
   #please-wait-modal-content { display: none; }
   #postrecordingdiv { display: none; }
+  #audio-intro { display: none; }
   textarea { width: 100%; }
 </style>
 
@@ -17,8 +18,10 @@
 <br><br>
 
 <div id="prerecordingdiv">
-  <p>Press record to start recording.</p>
-  <button onclick="startRecording(this);">record</button>
+  <p id="recordmessage">
+    Press record to start recording.
+  </p>
+  <button id="recordButton" onclick="startRecording(this);" disabled>record</button>
   <button class="button-prominent" onclick="stopRecording(this);" disabled>stop</button>
 </div>
 
@@ -33,7 +36,11 @@
   <br>
 </div>
 
-<div id="next-modal">
+<div id="audio-intro">
+  <p>Great! Now we're going to record audio files for the phone survey.</p>
+  <br>
+  <p>Look at the top of your window:</p>
+  <p>For each recording page, you will need to let the browser have access to your microphone by clicking "<strong>Allow</strong>", "<strong>Share selected device</strong>", or a similar button.</p>
 </div>
 
 <script>
@@ -53,6 +60,9 @@ function startUserMedia(stream) {
   input.connect(zeroGain);
   zeroGain.connect(audio_context.destination);
   __log('Input connected to muted gain node connected to audio context destination.');
+
+  recordButton = document.getElementById("recordButton");
+  recordButton.disabled = false;
 
   recorder = new Recorder(input);
   __log('Recorder initialised.');
@@ -125,6 +135,11 @@ function createPlayer() {
 }
 
 window.onload = function init() {
+  <% if @current_audio_name == "welcome" %>
+    $('#audio-intro').modal({
+      overlayClose: true
+    });
+  <% end %>
   try {
     // webkit shim
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
