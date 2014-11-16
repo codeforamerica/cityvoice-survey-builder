@@ -10,13 +10,14 @@
   textarea { width: 100%; }
 </style>
 
-<h2>Record audio for "<%= @current_audio_name %>"</h2>
+<h2>Record audio: "<%= @current_audio_name %>"</h2>
 <p><%= @current_audio_description %></p>
-<h6>Template example <br>(optional: edit this to something you can read from to make recording easier)</h6>
+<h6>Example script (you can edit!)</h6>
 <textarea><%= @current_audio_example %></textarea>
-<br>
+<br><br>
 
 <div id="prerecordingdiv">
+  <p>Press record to start recording.</p>
   <button onclick="startRecording(this);">record</button>
   <button class="button-prominent" onclick="stopRecording(this);" disabled>stop</button>
 </div>
