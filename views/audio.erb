@@ -7,11 +7,14 @@
   #recordingslist audio { display: block; margin-bottom: 10px; }
   #please-wait-modal-content { display: none; }
   #postrecordingdiv { display: none; }
+  textarea { width: 100%; }
 </style>
 
-<h2>Record "<%= @current_audio_name %>"</h2>
-
-<p></p>
+<h2>Record audio for "<%= @current_audio_name %>"</h2>
+<p><%= @current_audio_description %></p>
+<h6>Template example <br>(optional: edit this to something you can read from to make recording easier)</h6>
+<textarea><%= @current_audio_example %></textarea>
+<br>
 
 <div id="prerecordingdiv">
   <button onclick="startRecording(this);">record</button>

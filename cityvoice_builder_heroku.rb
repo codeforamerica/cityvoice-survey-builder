@@ -19,6 +19,24 @@ class CityvoiceBuilderHeroku < Sinatra::Base
     # redis.get("keyname")
     # redis.expire("keyname", 100) # deletes keyname after 100 seconds
     # redis.ttl("keyname") # returns remaining seconds for life of keyname
+    set :audio_info, {
+      "welcome" => {
+        "description" => "The first message played to a caller, giving context for the survey",
+        "example" => "Hi, thanks for calling! Your feedback will help us [GOAL]."
+      },
+      "consent" => {
+        "description" => "Asks the caller for consent to be called back",
+        "example" => "Do you want to make your phone number available for follow-up to this survey? For yes, press 1. For no, press 2."
+      },
+      "fatal_error" => {
+        "description" => "An error message played when the user has made an error multiple times (ending the call)",
+        "example" => "Sorry! We're having problems understanding your input. If you'd like to contact us and leave a voicemail, please call [PHONE NUMBER]."
+      },
+      "thanks" => {
+        "description" => "The final message played, after the survey is done",
+        "example" => "Thanks! Your feedback will help us [GOAL]. If you would like to get involved in [SURVEY TOPIC], please [MORE CONTACT INFO]."
+      },
+    }
   end
 
   get '/' do
@@ -95,7 +113,18 @@ class CityvoiceBuilderHeroku < Sinatra::Base
     audio_names += question_short_names
     audio_names += %w(fatal_error thanks)
     @current_audio_name = params[:current_audio_name]
-    puts @current_audio_name
+    if settings.audio_info.has_key?(@current_audio_name)
+      @current_audio_description = settings.audio_info[@current_audio_name]["description"]
+      @current_audio_example = settings.audio_info[@current_audio_name]["example"]
+    elsif @current_audio_name == 'voice_question'
+      @current_audio_description = "Here, record the open-ended voice question you wrote before"
+      @current_audio_example = questions['voice_question_text'] + " You will have 30 seconds to record your comments."
+    else
+      # Agree/disagree questions
+      @current_audio_description = "This is your agree/disagree question '#{@current_audio_name}'"
+      question = questions["agree_questions"].select { |q| q["short_name"] == @current_audio_name }.first
+      @current_audio_example = question["question_text"] + " . Press 1 if you agree or press 2 if you disagree."
+    end
     current_audio_index = audio_names.index(@current_audio_name)
     if @current_audio_name == "thanks"
       @next_link = "/#{@user_token}/tarball/build"
