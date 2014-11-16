@@ -109,7 +109,7 @@ function uploadAudio(e) {
     fd.append('data', blob);
     $.ajax({
       type: "POST",
-      url: "/<%= @user_token %>/audio/<%= @current_audio_name %>",
+      url: "/<%= @user_token %>/audio/<%= @current_audio_name.gsub(" ", "-") %>",
       data: fd,
       processData: false,
       contentType: false

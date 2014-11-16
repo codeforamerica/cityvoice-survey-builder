@@ -112,7 +112,7 @@ class CityvoiceBuilderHeroku < Sinatra::Base
     audio_names = %w(welcome consent)
     audio_names += question_short_names
     audio_names += %w(fatal_error thanks)
-    @current_audio_name = params[:current_audio_name]
+    @current_audio_name = params[:current_audio_name].gsub("-", " ")
     if settings.audio_info.has_key?(@current_audio_name)
       @current_audio_description = settings.audio_info[@current_audio_name]["description"]
       @current_audio_example = settings.audio_info[@current_audio_name]["example"]
@@ -129,7 +129,7 @@ class CityvoiceBuilderHeroku < Sinatra::Base
     if @current_audio_name == "thanks"
       @next_link = "/#{@user_token}/tarball/build"
     else
-      next_audio_name = audio_names[current_audio_index + 1]
+      next_audio_name = audio_names[current_audio_index + 1].gsub(" ","-")
       @next_link = "/#{@user_token}/audio/#{next_audio_name}"
     end
     erb :audio
