@@ -1,13 +1,5 @@
 <% if @built_app_url %>
 <h2>Success!</h2>
-<p>
-  Your CityVoice survey web site will be available in about 60 seconds at:
-  <br>
-  <a href="<%= @built_app_url %>" target="_blank"><%= @built_app_url %></a>
-</p>
-<p>
-This is your "URL". We'll use it for the last step.
-</p>
 
 <h2>Connect your phone number</h2>
 <p>
@@ -21,14 +13,26 @@ Then, click on the phone number:
 </p>
 <img src="/img/twilio-numbers-page.png">
 <p>
-Lastly, copy and paste your URL from above into Voice section's "Request URL" field and add <strong>/calls</strong> onto the end, like the example below. When done, click "Save".
+  Lastly, copy and paste
+  <br><br>
+  <%= @built_app_url %>/calls
+  <br><br>
+  into the Voice "Request URL" box (like below).
 </p>
 <img src="/img/twilio-configure-phone-number.png">
 
 
 <h2>Congratulations</h2>
 <p>
-You're done! Call your phone number to experience your new CityVoice survey! When asked for a call-in code, you can use "001".
+  You're done! Call your phone number to try out your new CityVoice survey!
+</p>
+<p>
+  When asked for a call-in code, you can use "001".
+</p>
+<p>
+  Lastly, your CityVoice survey web site will be available in a few minutes at:
+  <br>
+  <a href="<%= @built_app_url %>" target="_blank"><%= @built_app_url %></a>
 </p>
 
 <% else %>
