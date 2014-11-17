@@ -1,15 +1,17 @@
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-<script type='text/javascript' src='/js/jquery.simplemodal-1.4.4.js'></script>
-<link type='text/css' href='/css/modal.css' rel='stylesheet' media='screen' />
 
 <style type='text/css'>
   ul { list-style: none; }
   #recordingslist audio { display: block; margin-bottom: 10px; }
   #please-wait-modal-content { display: none; }
   #postrecordingdiv { display: none; }
-  #audio-intro { display: none; }
+  #postuploaddiv { display: none; }
   textarea { width: 100%; }
 </style>
+
+<div id="browser-permissions-warning" class="alert">
+  To record audio, give your browser access your microphone.
+</div>
 
 <h2>Record audio: "<%= @current_audio_name %>"</h2>
 <p><%= @current_audio_description %></p>
@@ -31,16 +33,8 @@
   <button class="button-prominent" id="rerecordButton" onclick="location.reload();" disabled>re-record</button>
 </div>
 
-<div id="please-wait-modal-content">
+<div id="postuploaddiv">
   Thanks! Please wait while your audio is processed...
-  <br>
-</div>
-
-<div id="audio-intro">
-  <p>Great! Now we're going to record audio files for the phone survey.</p>
-  <br>
-  <p>Look at the top of your window:</p>
-  <p>For each recording page, you will need to let the browser have access to your microphone by clicking "<strong>Allow</strong>", "<strong>Share selected device</strong>", or a similar button.</p>
 </div>
 
 <script>
@@ -63,6 +57,9 @@ function startUserMedia(stream) {
 
   recordButton = document.getElementById("recordButton");
   recordButton.disabled = false;
+
+  warningDiv = document.getElementById("browser-permissions-warning");
+  warningDiv.style.display = "none";
 
   recorder = new Recorder(input);
   __log('Recorder initialised.');
@@ -88,22 +85,15 @@ function stopRecording(button) {
   postrecordingdiv = document.getElementById("postrecordingdiv");
   postrecordingdiv.style.display = 'inline';
   __log('Stopped recording.');
-
   createPlayer();
-
-/*
-*/
-
-  //recorder.clear();
 }
 
 function uploadAudio(e) {
-  $('#please-wait-modal-content').modal({
-    overlayClose: true
-  });
+  postrecordingdiv = document.getElementById("postrecordingdiv");
+  postrecordingdiv.style.display = 'none';
+  postuploaddiv = document.getElementById("postuploaddiv");
+  postuploaddiv.style.display = 'inline';
   recorder && recorder.exportWAV(function(blob) {
-    console.log("sending data");
-    console.log(blob);
     var fd = new FormData();
     fd.append('fname', 'myaudio.wav');
     fd.append('data', blob);
@@ -114,10 +104,8 @@ function uploadAudio(e) {
       processData: false,
       contentType: false
       }).done(function(response) {
-        console.log(response);
-        //alert("all done!");
-        done_content = "<br>Done! Click next below to continue.<br><a href=\"<%= @next_link %>\" class=\"button\">Next</a>";
-        $('#please-wait-modal-content').append(done_content);
+        done_content = "<p>Done! Click next below to continue.<br><a href=\"<%= @next_link %>\" class=\"button\">Next</a></p>";
+        $('#postuploaddiv').append(done_content);
       });
   });
 }
@@ -135,11 +123,6 @@ function createPlayer() {
 }
 
 window.onload = function init() {
-  <% if @current_audio_name == "welcome" %>
-    $('#audio-intro').modal({
-      overlayClose: true
-    });
-  <% end %>
   try {
     // webkit shim
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
