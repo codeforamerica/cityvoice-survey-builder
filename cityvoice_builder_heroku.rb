@@ -13,7 +13,7 @@ class CityvoiceBuilderHeroku < Sinatra::Base
 
   configure do
     set :redis_url, URI.parse(ENV["REDISTOGO_URL"])
-    set :expiration_time, 600
+    set :expiration_time, 1800
     # Usage:
     # redis.set("keyname", "value")
     # redis.get("keyname")
