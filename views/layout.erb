@@ -48,15 +48,16 @@
 
         <div class="layout-minor">
             <nav role="navigation" class="toc" id="toc">
-              <h2>Steps</h2>
-              <ol class="sectlevel1">
+              <h2>Table of contents</h2>
+              <ul>
+                <li>Setup</li>
                 <li id="locations-step" <%= "class='step-selected'" if @page_name == 'signup' %>>Create accounts</li>
                 <li id="locations-step" <%= "class='step-selected'" if @page_name == 'locations' %>>Add locations</li>
                 <li id="questions-step" <%= "class='step-selected'" if @page_name == 'questions' %>>Add questions</li>
                 <li id="audio-step" <%= "class='step-selected'" if @page_name == 'audio' %>>Record question audio</a></li>
                 <li id="push-step" <%= "class='step-selected'" if @page_name == 'push' %>>Publish the survey</a></li>
                 <li id="push-step" <%= "class='step-selected'" if @page_name == 'response' %>>Connect phone number</a></li>
-              </ol>
+              </ul>
             </nav>
         </div>
 
