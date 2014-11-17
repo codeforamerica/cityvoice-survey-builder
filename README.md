@@ -1,5 +1,17 @@
 # CityVoice-Builder for Heroku
 
+## Running Locally
+
+- Clone the repo
+- Install Ruby 2.1.1 if not already installed (with rvm, `rvm install 2.1.1`)
+- Install dependencies with `bundle install`
+- Set dummy environment variables:
+ - `HEROKU_OAUTH_ID`
+ - `HEROKU_OAUTH_SECRET`
+- Install redis (brew install redis on OSX using homebrew)
+- Set `REDISTOGO_URL` to redis://localhost:6379 (or whatever your local connection is)
+- Run the app with `bundle exec rackup` and open your browser to http://localhost:9292
+
 ## Deployment
 
 Non-CFA users shouldn't need to deploy this, but for documentation purposes, here goes!
