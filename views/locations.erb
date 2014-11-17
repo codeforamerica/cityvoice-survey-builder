@@ -63,25 +63,22 @@
 
   <h2>Add Locations</h2>
     <p>Add each location's address that you'll be asking questions about. You can add as many as you like.</p>
-    
-
-
-  <div id="locations">
-    <label>Address</label>
-    <div id="panel">
-      <input id="address" type="textbox" value="155 Ninth Street, SF, CA">
-      <input type="button" value="Add a location" onclick="geocodeAddress()">
+    <div id="locations">
+      <label>Address:</label>
+      <div id="panel">
+        <input id="address" type="textbox" value="155 Ninth Street, SF, CA">
+        <input type="button" value="Add location" onclick="geocodeAddress()">
+      </div>
+      <form name="locations" method="post">
+        <ol>
+          <div id="locations-form-inputs">
+          </div>
+        </ol>
+          <p>As you add locations, they'll appear on the map below.</p>
+          <div id="map-canvas"></div>
+          <p>Once you've added all of the addresses, continue to the next step.</p>
+        <p><input type="submit" value="Next step"></p>
+      </form>
     </div>
-    <form name="locations" method="post">
-      <ol>
-        <div id="locations-form-inputs">
-        </div>
-      </ol>
-        <p>As you add locations, they'll appear on the map below.</p>
-        <div id="map-canvas"></div>
-        <p>Once you've added all of the addresses, continue to the next step.</p>
-      <p><input type="submit" value="Next step"></p>
-    </form>
-  </div>
 
 
