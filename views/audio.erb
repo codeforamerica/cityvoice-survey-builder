@@ -10,27 +10,25 @@
 </style>
 
 <div id="browser-permissions-warning" class="alert">
-  To record audio, give your browser access your microphone.
+  <p>To record audio, you must give your browser access to your microphone.</p>
 </div>
 
-<h2>Record audio: "<%= @current_audio_name %>"</h2>
+<h2>Record audio for: "<%= @current_audio_name %>"</h2>
 <p><%= @current_audio_description %></p>
-<h6>Example script (you can edit!)</h6>
+<label>Script (this is just a suggestion, you can edit the text)</label>
 <textarea><%= @current_audio_example %></textarea>
 <br><br>
 
 <div id="prerecordingdiv">
-  <p id="recordmessage">
-    Press record to start recording.
-  </p>
-  <button id="recordButton" onclick="startRecording(this);" disabled>record</button>
-  <button class="button-prominent" onclick="stopRecording(this);" disabled>stop</button>
+  <p id="recordmessage">When you're happy with your script, press record and start speaking.</p>
+  <button id="recordButton" onclick="startRecording(this);" disabled>Record</button>
+  <button class="button-prominent" onclick="stopRecording(this);" disabled>Stop</button>
 </div>
 
 <div id="postrecordingdiv">
   <div id="recordingslist"></div>
-  <button id="uploadButton" onclick="uploadAudio(this);" disabled>upload</button>
-  <button class="button-prominent" id="rerecordButton" onclick="location.reload();" disabled>re-record</button>
+  <button id="uploadButton" onclick="uploadAudio(this);" disabled>Upload</button>
+  <button class="button-prominent" id="rerecordButton" onclick="location.reload();" disabled>Re-record</button>
 </div>
 
 <div id="postuploaddiv">
@@ -104,7 +102,7 @@ function uploadAudio(e) {
       processData: false,
       contentType: false
       }).done(function(response) {
-        done_content = "<p>Done! Click next below to continue.<br><a href=\"<%= @next_link %>\" class=\"button\">Next</a></p>";
+        done_content = "<p>Audio successfully uploaded. <br><a href=\"<%= @next_link %>\" class=\"button\">Next step</a></p>";
         $('#postuploaddiv').append(done_content);
       });
   });
