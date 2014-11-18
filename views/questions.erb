@@ -1,38 +1,27 @@
-<h2>
-  Add Questions
-</h2>
+<h2>Add Questions</h2>
 
 <form name="input" action="questions" method="post">
-
-<p>The info you put here will be displayed in CityVoice like this:</p>
-<img src="/img/question-screenshot.png">
-
-<h3>Agree/Disagree</h3>
-
-<p>
-Add up to 4 "agree"/"disagree" questions
-</p>
-
-<ol>
-  <li>
-    <input type="text" name="questions[agree_questions][][short_name]" class="short_name" placeholder="Example: Property Outcome" required>
-    <input type="text" name="questions[agree_questions][][question_text]" class="question_text" placeholder="Example: Do you think this property should be demolished?" required>
-  </li>
-  <% (1..3).to_a.each do |number| %>
+  <p>You can ask up to 5 questions in your survey.</p>
+  <p>This is how the questions will look when you're done:</p>
+  <img src="/img/question-screenshot.png">
+  <p>The first 4 questions must answerable with simply "Agree" or "Disagree".</p>
+  <p>Give each of these questions a title, so you can match it later to the audio you'll be recording, followed by the question you're asking. </p>
+  <ol>
     <li>
-      <input type="text" name="questions[agree_questions][][short_name]" class="short_name" placeholder="Example: Property Outcome">
-      <input type="text" name="questions[agree_questions][][question_text]" class="question_text" placeholder="Example: Do you think this property should be demolished?">
+      <input type="text" name="questions[agree_questions][][short_name]" class="short_name" placeholder="Example: Property Outcome" required>
+      <input type="text" name="questions[agree_questions][][question_text]" class="question_text" placeholder="Example: Do you think this property should be demolished?" required>
     </li>
-  <% end %>
-</ol>
+    <% (1..3).to_a.each do |number| %>
+      <li>
+        <input type="text" name="questions[agree_questions][][short_name]" class="input short_name" placeholder="Example: Property Outcome">
+        <input type="text" name="questions[agree_questions][][question_text]" class="input question_text" placeholder="Example: Do you think this property should be demolished?">
+      </li>
+    <% end %>
+    <li>
+      <p>The final question can be open ended.</p>
+      <input type="text" name="questions[voice_question_text]" class="question_text" placeholder="Example: What would make this park better?" required>
+    </li>
+  </ol>
 
-<h3>Voice Question</h3>
-<p>
-  Add a question for people to leave voice comments
-</p>
-
-<input type="text" name="questions[voice_question_text]" class="question_text" placeholder="Example: What would make this park better?" required>
-
-<br><br>
-<input type="submit" value="Submit">
+  <input type="submit" value="Next step">
 </form>
