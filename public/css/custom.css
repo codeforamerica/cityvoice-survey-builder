@@ -6,6 +6,10 @@
   width: 400px;
 }
 
+#address {
+  width: 500px;
+}
+
 div.layout-semibreve#main-container {
   padding-top: 1em;
 }
