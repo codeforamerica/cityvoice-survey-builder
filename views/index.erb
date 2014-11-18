@@ -1,3 +1,7 @@
+<div id="browser-warning" style="display: none;">
+  <p class="alert-failure">Sorry! Your web browser does not support recording audio for CityVoice.<br>Please use <a href="https://www.google.com/intl/en/chrome/browser/">Chrome</a> or <a href="https://www.mozilla.org/en-US/firefox/new/">Firefox</a> (both free, modern browsers that are great.)</p>
+</div>
+
 <h2>What is this?</h2>
 
 <p><a href="http://www.cityvoiceapp.com/">CityVoice</a> is a place-based call-in system to collect community feedback on geographic entities (like vacant properties) using the simple, accessible medium of the telephone.</p>
@@ -20,4 +24,30 @@
   </li>
 </ul>
 
-<a href="/signup" class="button">Get started</a>
+<a href="/signup" id="get-started-button" class="button">Get started</a>
+
+<script>
+function showBrowserWarning() {
+  div = document.getElementById('browser-warning');
+  div.style.display = 'inline';
+  div = document.getElementById('get-started-button');
+  div.style.display = 'none';
+}
+
+window.onload = function init() {
+  try {
+    // webkit shim
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
+    navigator.getUserMedia = (navigator.getUserMedia ||
+      navigator.webkitGetUserMedia ||
+      navigator.mozGetUserMedia ||
+      navigator.msGetUserMedia);
+    window.URL = window.URL || window.webkitURL;
+
+    audio_context = new AudioContext;
+    if (navigator.getUserMedia === undefined) { showBrowserWarning(); }
+  } catch (e) {
+    showBrowserWarning();
+  }
+};
+</script>
