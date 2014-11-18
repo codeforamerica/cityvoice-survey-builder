@@ -30,7 +30,7 @@ class CityvoiceBuilderHeroku < Sinatra::Base
       },
       "fatal_error" => {
         "description" => "An error message played when the user has made an error multiple times (ending the call)",
-        "example" => "Sorry! We're having problems understanding your input. If you'd like to contact us and leave a voicemail, please call [PHONE NUMBER]."
+        "example" => "Sorry! We're having problems understanding your input. If you'd like a different way to contact us [TELL THEM ANOTHER WAY TO CONTACT YOU]."
       },
       "thanks" => {
         "description" => "The final message played, after the survey is done",
