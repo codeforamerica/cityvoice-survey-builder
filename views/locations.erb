@@ -42,6 +42,11 @@
       });
     }
 
+    function deleteMyParentElement(e) {
+      nodeToBeDeleted = e.parentNode.parentNode;
+      nodeToBeDeleted.parentNode.removeChild(nodeToBeDeleted);
+    }
+
     function addLocation(location) {
       locationsFormInputsDiv = document.getElementById('locations-form-inputs');
       lat = location.geometry.location.lat();
@@ -51,7 +56,8 @@
       nameInput = '<input name="locations[][name]" type="hidden" value="' + name + '">';
       latInput = '<input name="locations[][lat]" type="hidden" value="' + lat +'">';
       lngInput = '<input name="locations[][lng]" type="hidden" value="' + lng +'">';
-      newContent = name + nameInput + latInput + lngInput + '<br>';
+      deleteElement = '<a href="" onclick="deleteMyParentElement(this); return false;">(delete)</a>';
+      newContent = name + ' ' + deleteElement + nameInput + latInput + lngInput + '<br>';
       locationsFormInputsDiv.innerHTML += '<div class="location-input-set"><li>' + newContent + '</li></div>';
     }
 
