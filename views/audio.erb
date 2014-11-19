@@ -42,9 +42,10 @@ function __log(e, data) {
 
 var audio_context;
 var recorder;
+var input;
 
 function startUserMedia(stream) {
-  var input = audio_context.createMediaStreamSource(stream);
+  input = audio_context.createMediaStreamSource(stream);
   __log('Media stream created.');
 
   var zeroGain = audio_context.createGain();
