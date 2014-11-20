@@ -91,6 +91,8 @@ class CityvoiceBuilderHeroku < Sinatra::Base
     clean_questions = Hash.new
     clean_questions["agree_questions"] = params[:questions]["agree_questions"].select do |q|
       q["short_name"] != ""
+    end.each do |q|
+      q["short_name"] = q["short_name"].gsub(" ", "_").gsub(/\W/, "")
     end
     clean_questions["voice_question_text"] = params[:questions]["voice_question_text"]
     redis = Redis.new(:url => settings.redis_url)
