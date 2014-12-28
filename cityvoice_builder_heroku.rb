@@ -263,4 +263,15 @@ class CityvoiceBuilderHeroku < Sinatra::Base
     end
     erb :response
   end
+
+  get '/sign' do
+    puts params
+    if params.empty?
+      erb :sign_form
+    else
+      @args = params
+      @contact_info_with_html_line_breaks = params["contact-info"].gsub("\n", "<br>")
+      erb :sign_template, layout: false
+    end
+  end
 end

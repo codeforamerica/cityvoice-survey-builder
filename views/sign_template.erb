@@ -1,0 +1,152 @@
+<link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Open+Sans+Condensed:700' rel='stylesheet' type='text/css'>
+
+<style>
+
+@page{ size:landscape; }
+
+body {
+  font-size: 28px;
+  font-family: 'Source Sans Pro', sans-serif;
+}
+
+#top-container {
+  border-bottom-style: solid;
+  height: auto;
+  overflow: hidden;
+  padding-top: 10px;
+  padding-bottom: 20px;
+}
+
+#project-url {
+  float: right;
+}
+
+#project-title {
+  float: left;
+  width: auto;
+  overflow: hidden;
+}
+
+#middle-container {
+  padding-bottom: 10px;
+  border-bottom-style: solid;
+}
+
+#call-to-action {
+  font-family: 'Open Sans Condensed', sans-serif;
+  font-size: 96px;
+  line-height: 96px;
+  margin-top: 16px;
+  margin-bottom: 20px;
+}
+
+#time-type-of-feedback {
+  font-size: 36px;
+  margin-top: 12px;
+  margin-bottom: 12px;
+}
+
+#call-area {
+  font-size: 76px;
+  margin-top: 40px;
+  margin-bottom: 20px;
+}
+
+#location-code-text {
+  font-size: 48px;
+  width: auto;
+  margin-bottom: 26px;
+}
+
+#location-code-number {
+  border-style: solid;
+  border-color: black;
+  display: inline;
+  margin-left: 6px;
+  padding-left: 160px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+#bottom-container {
+  margin-top: 12px;
+}
+
+#cityvoice-logo {
+  display: inline;
+  padding-top: 10px;
+  float: left;
+}
+
+#survey-contact-info {
+  font-size: 12px;
+  display: inline;
+  float: right;
+}
+
+</style>
+
+<body>
+
+  <div id="top-container">
+
+    <div id="project-title">
+      <%= @args["project-title"] %>
+      <!--City Parks Master Plan-->
+    </div>
+
+    <div id="project-url">
+      <%= @args["project-url"] %>
+      <!-- betterparks4city.com -->
+    </div>
+
+  </div>
+
+  <div id="middle-container">
+
+    <div id="call-to-action">
+      <%= @args["call-to-action"] %>
+      <!-- How would you make this park better? -->
+    </div>
+
+    <div id="time-type-of-feedback">
+      <%= @args["text-below-question"] %>
+      <!-- Take a 2 minute survey from the city. -->
+    </div>
+
+    <div id="call-area">
+      Call <strong><%= @args["phone-number"] %></strong>
+    </div>
+
+    <div id="location-code-text">
+      Location Code:
+      <div id="location-code-number">
+      </div>
+    </div>
+
+  </div>
+
+  <div id="bottom-container">
+
+    <div id="cityvoice-logo">
+      <img src="/img/cityvoice-logo-black-half.png" alt="CITYVOICE">
+    </div>
+
+    <div id="survey-contact-info">
+      <%= @contact_info_with_html_line_breaks %>
+      <!--
+      South Bend Parks Administration<br>
+      111 Walter St<br>
+      South Bend, IN<br>
+      111-222-3333
+      -->
+    </div>
+
+  </div>
+
+</body>
+
+<script>
+  window.print();
+</script>

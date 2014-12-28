@@ -1,0 +1,39 @@
+<h2>CityVoice Sign Generator</h2>
+
+<p>
+  Fill out the below form to generate a printable sign for your CityVoice survey (it will open in a new tab, so you can come back and tweak it as you'd like.)
+</p>
+
+<p>
+  <img src="/img/sign-template.png" alt="sign-template">
+</p>
+
+<p><small class="note">Required fields are marked <abbr title="Required">*</abbr></small></p>
+
+<form action="/sign" method="GET" target="_blank">
+  Project title<abbr title="Required">*</abbr><br>
+  <input type="text" name="project-title" required>
+
+  <br>
+  Project URL<br>
+  <input type="text" name="project-url">
+
+  <br>
+  Question/call to action<abbr title="Required">*</abbr><br>
+  <input type="text" name="call-to-action" required>
+
+  <br>
+  Text below question<abbr title="Required">*</abbr><br>
+  <input type="text" name="text-below-question" required>
+
+  <br>
+  Phone number<abbr title="Required">*</abbr><br>
+  <input type="text" name="phone-number" required>
+
+  <br>
+  Organizer/contact information<abbr title="Required">*</abbr><br>
+  <textarea rows="4" name="contact-info" required></textarea>
+
+  <br><br>
+  <input type="submit" value="Submit">
+</form>
