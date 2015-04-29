@@ -42,6 +42,12 @@ class CityvoiceBuilderHeroku < Sinatra::Base
   get '/' do
     erb :index
   end
+  
+  #
+  # Do we need the signup page any longer, if we're not asking people to set
+  # up their own Twilio accounts and Heroku does a good job of stepping people
+  # through account creation and return upon OAuth?
+  #
 
   get '/signup' do
     @page_name = 'signup'
