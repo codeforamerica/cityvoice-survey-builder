@@ -239,7 +239,7 @@ class CityvoiceBuilderHeroku < Sinatra::Base
   #
   #   https://github.com/codeforamerica/cityvoice-survey-builder/issues/61#issuecomment-97584397
   #
-  # After user selects a phone number, reserve it with Heroku:
+  # After user selects a phone number, reserve it with Twilio:
   #
   #   https://github.com/codeforamerica/cityvoice-survey-builder/issues/61#issuecomment-97588226
   #
