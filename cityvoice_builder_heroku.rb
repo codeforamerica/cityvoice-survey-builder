@@ -228,6 +228,23 @@ class CityvoiceBuilderHeroku < Sinatra::Base
     redis.expire("#{token}_tarball", settings.expiration_time)
     redirect to("/#{params[:user_token]}/push"), 302
   end
+  
+  #
+  # After locations, questions, and audio, but before
+  # pushing build to Heroku, add phone number selection.
+  #
+  # Use average lat/lon and IncomingPhoneNumbers to find local numbers,
+  # and display a list for people to choose from. They may have feelings
+  # about the right area code to use:
+  #
+  #   https://github.com/codeforamerica/cityvoice-survey-builder/issues/61#issuecomment-97584397
+  #
+  # After user selects a phone number, reserve it with Heroku:
+  #
+  #   https://github.com/codeforamerica/cityvoice-survey-builder/issues/61#issuecomment-97588226
+  #
+  # Include the phone number in the tarball, if Dave is to be believed.
+  #
 
   get '/:user_token/push' do
     @heroku_authorize_url = "https://id.heroku.com/oauth/authorize?" \
@@ -263,6 +280,19 @@ class CityvoiceBuilderHeroku < Sinatra::Base
     end
     erb :response
   end
+
+  #
+  # After Heroku authorization add phone number configuration
+  # and email to CfA about new signups.
+  #
+  # Use the generated app name to create a voice callback URL and inform Twilio:
+  #
+  #   https://github.com/codeforamerica/cityvoice-survey-builder/issues/61#issuecomment-97589478
+  #
+  # Use Heroku account information to inform CfA:
+  #
+  #   https://github.com/codeforamerica/cityvoice-survey-builder/issues/61#issuecomment-97606058
+  #
 
   get '/sign' do
     puts params
