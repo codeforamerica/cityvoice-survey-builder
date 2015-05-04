@@ -172,7 +172,9 @@ class CityvoiceBuilderHeroku < Sinatra::Base
     # Parse JSON from Redis into Ruby hashes
     locations = JSON.parse(redis.get("#{params[:user_token]}_locations"))
     questions = JSON.parse(redis.get("#{params[:user_token]}_questions"))
-    phone_number = CityvoiceTwilioService.buy_number_by_location(locations)
+    twilio_sid, twilio_token = ENV['TWILIO_ACCOUNT_SID'], ENV['TWILIO_AUTH_TOKEN']
+    phone_number = CityvoiceTwilioService.new(twilio_sid, twilio_token)
+                                         .buy_number_by_location(locations)
     app_content_set_csv_string = CityvoiceCsvGenerator.app_content_set_csv(phone_number)
     locations_csv_string = CityvoiceCsvGenerator.locations_csv(locations)
     questions_csv_string = CityvoiceCsvGenerator.questions_csv(questions)
