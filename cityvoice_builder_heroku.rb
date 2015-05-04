@@ -172,6 +172,8 @@ class CityvoiceBuilderHeroku < Sinatra::Base
     # Parse JSON from Redis into Ruby hashes
     locations = JSON.parse(redis.get("#{params[:user_token]}_locations"))
     questions = JSON.parse(redis.get("#{params[:user_token]}_questions"))
+    phone_number = CityvoiceTwilioService.buy_number_by_location(locations)
+    app_content_set_csv_string = CityvoiceCsvGenerator.app_content_set_csv(phone_number)
     locations_csv_string = CityvoiceCsvGenerator.locations_csv(locations)
     questions_csv_string = CityvoiceCsvGenerator.questions_csv(questions)
     # Download latest CityVoice Tarball from GitHub to /tmp
@@ -188,11 +190,16 @@ class CityvoiceBuilderHeroku < Sinatra::Base
     system("tar -zxvf #{tarball_path} -C #{destination_path}")
     path_to_repo = Dir[destination_path + "/*"][0]
     # Delete CSV files in tmp folder
+    app_content_set_csv_path = "#{path_to_repo}/data/app_content_set.csv"
     locations_csv_path = "#{path_to_repo}/data/locations.csv"
     questions_csv_path = "#{path_to_repo}/data/questions.csv"
+    File.delete(app_content_set_csv_path)
     File.delete(locations_csv_path)
     File.delete(questions_csv_path)
     # Write new CSV files in tmp folder
+    File.open(app_content_set_csv_path, 'w') do |file|
+      file.write(app_content_set_csv_string)
+    end
     File.open(locations_csv_path, 'w') do |file|
       file.write(locations_csv_string)
     end
