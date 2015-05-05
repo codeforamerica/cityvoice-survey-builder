@@ -29,7 +29,7 @@ describe CityvoiceTwilioService do
 
       it 'sends the average of locations to the Twilio client' do
         expect(fake_local_resource).to have_received(:list).with(
-          near_lat_long: "37.805499999999995,-122.26785",
+          near_lat_long: "37.80550,-122.26785",
           distance: 50
         )
       end

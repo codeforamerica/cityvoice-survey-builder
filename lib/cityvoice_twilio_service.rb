@@ -27,7 +27,7 @@ class CityvoiceTwilioService
     #   https://github.com/codeforamerica/cityvoice-survey-builder/issues/61#issuecomment-97588226
     #
     numbers = @client.available_phone_numbers.get('US').local.list(
-      near_lat_long: "#{lat},#{lng}",
+      near_lat_long: sprintf( "%0.5f,%0.5f", lat, lng),
       distance: 50
     )
     
