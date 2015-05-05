@@ -24,12 +24,12 @@ describe CityvoiceTwilioService do
       }
 
       before do
-        CityvoiceTwilioService.new("sid","token").buy_number_by_locations(location_input)
+        @result = CityvoiceTwilioService.new("sid","token").buy_number_by_locations(location_input)
       end
 
       it 'sends the average of locations to the Twilio client' do
         expect(fake_local_resource).to have_received(:list).with(
-          near_lat_long: "37.8055,-122.26785",
+          near_lat_long: "37.805499999999995,-122.26785",
           distance: 50
         )
       end
@@ -38,8 +38,8 @@ describe CityvoiceTwilioService do
         expect(fake_incoming_number_resource).to have_received(:create).with(phone_number: fake_number.phone_number)
       end
 
-      pending
       it 'should get a nearby phone number for some location' do
+        expect(@result).to eq(fake_number.friendly_name)
       end
     end
   end
