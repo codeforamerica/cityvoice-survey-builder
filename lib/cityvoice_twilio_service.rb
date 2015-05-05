@@ -4,7 +4,7 @@ class CityvoiceTwilioService
     @client = Twilio::REST::Client.new(account_sid, auth_token)
   end
 
-  def buy_number_by_location(locations)
+  def buy_number_by_locations(locations)
     #
     # Calculate average location.
     #

@@ -4,7 +4,9 @@ require 'json'
 require 'redis'
 require 'securerandom'
 require 'fileutils'
+require 'twilio-ruby'
 require File.expand_path('../lib/cityvoice_csv_generator', __FILE__)
+require File.expand_path('../lib/cityvoice_twilio_service', __FILE__)
 
 class CityvoiceBuilderHeroku < Sinatra::Base
   raise "Need to set HEROKU_OAUTH_ID" unless ENV.has_key?('HEROKU_OAUTH_ID')
