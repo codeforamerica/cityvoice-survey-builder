@@ -29,4 +29,17 @@ EOF
       expect(new_csv).to eq(desired_csv_string)
     end
   end
+
+  describe '::app_content_set_csv' do
+    let(:phone_number) { "(510) 555-1212" }
+
+    it 'creates a CSV string in CityVoice format' do
+      new_csv = CityvoiceCsvGenerator.app_content_set_csv(phone_number)
+      desired_csv_string = <<EOF
+Issue,App Phone Number,Message From,Message URL,Header Color,Short Title,Call In Code Digits,Feedback Form URL
+CityVoice,#{phone_number},CityVoice Maintainers,/assets/welcome.mp3,#6DC6AD,CityVoice,3,http://example.com
+EOF
+      expect(new_csv).to eq(desired_csv_string)
+    end
+  end
 end
