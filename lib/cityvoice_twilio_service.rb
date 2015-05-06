@@ -35,6 +35,6 @@ class CityvoiceTwilioService
     bought = @client.account.incoming_phone_numbers.create(:phone_number => wanted.phone_number)
     
     # Return a string like "(510) 555-1212"
-    return bought.friendly_name
+    return bought
   end
 end

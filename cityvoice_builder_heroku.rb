@@ -175,9 +175,10 @@ class CityvoiceBuilderHeroku < Sinatra::Base
     locations = JSON.parse(redis.get("#{params[:user_token]}_locations"))
     questions = JSON.parse(redis.get("#{params[:user_token]}_questions"))
     twilio_sid, twilio_token = ENV['TWILIO_ACCOUNT_SID'], ENV['TWILIO_AUTH_TOKEN']
-    phone_number = CityvoiceTwilioService.new(twilio_sid, twilio_token)
-                                         .buy_number_by_locations(locations)
-    app_content_set_csv_string = CityvoiceCsvGenerator.app_content_set_csv(phone_number)
+    number = CityvoiceTwilioService.new(twilio_sid, twilio_token)
+                                   .buy_number_by_locations(locations)
+    redis.set("#{params[:user_token]}_number_sid", number.sid)
+    app_content_set_csv_string = CityvoiceCsvGenerator.app_content_set_csv(number.friendly_name)
     locations_csv_string = CityvoiceCsvGenerator.locations_csv(locations)
     questions_csv_string = CityvoiceCsvGenerator.questions_csv(questions)
     # Download latest CityVoice Tarball from GitHub to /tmp

@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe CityvoiceTwilioService do
   let(:fake_client) { double('Twilio::REST::Client') }
-  let(:fake_number) { double('number', :friendly_name => '(222) 333-4444', :phone_number => '+12223334444') }
+  let(:fake_number) { double('number', :friendly_name => '(222) 333-4444', :phone_number => '+12223334444', :sid => '0xDEADBEEF') }
   let(:fake_local_resource) { double('local', :list => [fake_number]) }
   let(:fake_incoming_number_resource) { double('incoming_numbers', :create => fake_number) }
 
@@ -39,7 +39,7 @@ describe CityvoiceTwilioService do
       end
 
       it 'should get a nearby phone number for some location' do
-        expect(@result).to eq(fake_number.friendly_name)
+        expect(@result).to eq(fake_number)
       end
     end
   end
