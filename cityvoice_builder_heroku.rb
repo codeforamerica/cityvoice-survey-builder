@@ -176,7 +176,7 @@ class CityvoiceBuilderHeroku < Sinatra::Base
     questions = JSON.parse(redis.get("#{params[:user_token]}_questions"))
     twilio_sid, twilio_token = ENV['TWILIO_ACCOUNT_SID'], ENV['TWILIO_AUTH_TOKEN']
     phone_number = CityvoiceTwilioService.new(twilio_sid, twilio_token)
-                                         .buy_number_by_location(locations)
+                                         .buy_number_by_locations(locations)
     app_content_set_csv_string = CityvoiceCsvGenerator.app_content_set_csv(phone_number)
     locations_csv_string = CityvoiceCsvGenerator.locations_csv(locations)
     questions_csv_string = CityvoiceCsvGenerator.questions_csv(questions)
