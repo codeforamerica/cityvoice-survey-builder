@@ -290,6 +290,16 @@ class CityvoiceBuilderHeroku < Sinatra::Base
         @built_app_url = "https://#{parsed_response["app"]["name"]}.herokuapp.com"
       end
     end
+    
+    # Add app voice URL to phone number
+    redis = Redis.new(:url => settings.redis_url)
+    number_sid = redis.get("#{params[:state]}_number_sid")
+    voice_url = "#{@built_app_url}/calls"
+    twilio_sid, twilio_token = ENV['TWILIO_ACCOUNT_SID'], ENV['TWILIO_AUTH_TOKEN']
+
+    CityvoiceTwilioService.new(twilio_sid, twilio_token)
+                               .set_number_voice_url(number_sid, voice_url)
+    
     erb :response
   end
 

@@ -37,4 +37,14 @@ class CityvoiceTwilioService
     # Return a string like "(510) 555-1212"
     return bought
   end
+  
+  def set_number_voice_url(number_sid, voice_url)
+    #
+    # Use the generated app name to create a voice callback URL and inform Twilio:
+    #
+    #   https://github.com/codeforamerica/cityvoice-survey-builder/issues/61#issuecomment-97589478
+    #
+    number = @client.account.incoming_phone_numbers.get(number_sid)
+    number.update({:voice_url => voice_url})
+  end
 end
