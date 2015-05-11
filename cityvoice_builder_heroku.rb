@@ -5,6 +5,7 @@ require 'redis'
 require 'securerandom'
 require 'fileutils'
 require 'twilio-ruby'
+require 'sendgrid-ruby'
 require File.expand_path('../lib/cityvoice_csv_generator', __FILE__)
 require File.expand_path('../lib/cityvoice_twilio_service', __FILE__)
 
@@ -299,6 +300,20 @@ class CityvoiceBuilderHeroku < Sinatra::Base
 
     CityvoiceTwilioService.new(twilio_sid, twilio_token)
                                .set_number_voice_url(number_sid, voice_url)
+    
+    client = SendGrid::Client.new(api_user: ENV['SENDGRID_USERNAME'], api_key: ENV['SENDGRID_PASSWORD'])
+    puts ENV['SENDGRID_USERNAME']
+    puts ENV['SENDGRID_PASSWORD']
+    mail = SendGrid::Mail.new(
+      to: 'mike@codeforamerica.org',
+      from: 'mike@codeforamerica.org',
+      subject: 'Yo, CityVoice Roolz',
+      text: <<-EOF
+        America FUCK YEAH there's a new kid on the block at #{@built_app_url}
+        EOF
+    )
+    
+    puts client.send(mail)
     
     erb :response
   end
