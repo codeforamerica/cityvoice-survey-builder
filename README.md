@@ -16,8 +16,7 @@
 
 Test the builder with [RSpec](http://rspec.info) and a few fake environment variables:
 
-    env HEROKU_OAUTH_ID=- HEROKU_OAUTH_SECRET=- REDISTOGO_URL=- \
-        rspec spec/lib/cityvoice_twilio_service_spec.rb
+    env HEROKU_OAUTH_ID=- HEROKU_OAUTH_SECRET=- REDISTOGO_URL=- rspec spec
 
 ## Deployment
 
