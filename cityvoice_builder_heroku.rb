@@ -171,8 +171,23 @@ class CityvoiceBuilderHeroku < Sinatra::Base
   get '/:user_token/tarball/build' do
     token = params[:user_token]
     redis = Redis.new(:url => settings.redis_url)
-    # Get JSON data out of Redis
-    # Parse JSON from Redis into Ruby hashes
+
+    #
+    # After locations, questions, and audio, but before
+    # pushing build to Heroku, add phone number selection.
+    #
+    # Use average lat/lon and IncomingPhoneNumbers to find local numbers,
+    # and display a list for people to choose from. They may have feelings
+    # about the right area code to use:
+    #
+    #   https://github.com/codeforamerica/cityvoice-survey-builder/issues/61#issuecomment-97584397
+    #
+    # After user selects a phone number, reserve it with Twilio:
+    #
+    #   https://github.com/codeforamerica/cityvoice-survey-builder/issues/61#issuecomment-97588226
+    #
+    # Include the phone number in the tarball, if Dave is to be believed.
+    #
     locations = JSON.parse(redis.get("#{params[:user_token]}_locations"))
     questions = JSON.parse(redis.get("#{params[:user_token]}_questions"))
     twilio_sid, twilio_token = ENV['TWILIO_ACCOUNT_SID'], ENV['TWILIO_AUTH_TOKEN']
@@ -242,23 +257,6 @@ class CityvoiceBuilderHeroku < Sinatra::Base
     redirect to("/#{params[:user_token]}/push"), 302
   end
   
-  #
-  # After locations, questions, and audio, but before
-  # pushing build to Heroku, add phone number selection.
-  #
-  # Use average lat/lon and IncomingPhoneNumbers to find local numbers,
-  # and display a list for people to choose from. They may have feelings
-  # about the right area code to use:
-  #
-  #   https://github.com/codeforamerica/cityvoice-survey-builder/issues/61#issuecomment-97584397
-  #
-  # After user selects a phone number, reserve it with Twilio:
-  #
-  #   https://github.com/codeforamerica/cityvoice-survey-builder/issues/61#issuecomment-97588226
-  #
-  # Include the phone number in the tarball, if Dave is to be believed.
-  #
-
   get '/:user_token/push' do
     @heroku_authorize_url = "https://id.heroku.com/oauth/authorize?" \
       + "client_id=#{ENV['HEROKU_OAUTH_ID']}" \
@@ -292,7 +290,14 @@ class CityvoiceBuilderHeroku < Sinatra::Base
       end
     end
     
-    # Add app voice URL to phone number
+    #
+    # After Heroku authorization add phone number configuration
+    # and email to CfA about new signups.
+    #
+    # Use the generated app name to create a voice callback URL and inform Twilio:
+    #
+    #   https://github.com/codeforamerica/cityvoice-survey-builder/issues/61#issuecomment-97589478
+    #
     redis = Redis.new(:url => settings.redis_url)
     number_sid = redis.get("#{params[:state]}_number_sid")
     voice_url = "#{@built_app_url}/calls"
@@ -302,7 +307,9 @@ class CityvoiceBuilderHeroku < Sinatra::Base
                                .set_number_voice_url(number_sid, voice_url)
     
     #
-    # Get email address from Heroku.
+    # Use Heroku account information to inform CfA:
+    #
+    #   https://github.com/codeforamerica/cityvoice-survey-builder/issues/61#issuecomment-97606058
     #
     @account_info_response = HTTParty.get("https://api.heroku.com/account", \
       headers: { \
@@ -311,9 +318,6 @@ class CityvoiceBuilderHeroku < Sinatra::Base
       })
     parsed_account_response = JSON.parse(@account_info_response.body)
 
-    #
-    # Email Mike & Jack.
-    #
     if ENV.has_key?('SENDGRID_USERNAME') && ENV.has_key?('SENDGRID_PASSWORD')
       client = SendGrid::Client.new(api_user: ENV['SENDGRID_USERNAME'], api_key: ENV['SENDGRID_PASSWORD'])
       mail = SendGrid::Mail.new(
@@ -331,19 +335,6 @@ class CityvoiceBuilderHeroku < Sinatra::Base
     
     erb :response
   end
-
-  #
-  # After Heroku authorization add phone number configuration
-  # and email to CfA about new signups.
-  #
-  # Use the generated app name to create a voice callback URL and inform Twilio:
-  #
-  #   https://github.com/codeforamerica/cityvoice-survey-builder/issues/61#issuecomment-97589478
-  #
-  # Use Heroku account information to inform CfA:
-  #
-  #   https://github.com/codeforamerica/cityvoice-survey-builder/issues/61#issuecomment-97606058
-  #
 
   get '/sign' do
     puts params
