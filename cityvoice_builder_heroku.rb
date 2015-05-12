@@ -301,19 +301,33 @@ class CityvoiceBuilderHeroku < Sinatra::Base
     CityvoiceTwilioService.new(twilio_sid, twilio_token)
                                .set_number_voice_url(number_sid, voice_url)
     
-    client = SendGrid::Client.new(api_user: ENV['SENDGRID_USERNAME'], api_key: ENV['SENDGRID_PASSWORD'])
-    puts ENV['SENDGRID_USERNAME']
-    puts ENV['SENDGRID_PASSWORD']
-    mail = SendGrid::Mail.new(
-      to: 'mike@codeforamerica.org',
-      from: 'mike@codeforamerica.org',
-      subject: 'Yo, CityVoice Roolz',
-      text: <<-EOF
-        America FUCK YEAH there's a new kid on the block at #{@built_app_url}
-        EOF
-    )
+    #
+    # Get email address from Heroku.
+    #
+    @account_info_response = HTTParty.get("https://api.heroku.com/account", \
+      headers: { \
+        "Authorization" => "Bearer #{@token_exchange_response["access_token"]}", \
+        "Accept" => "application/vnd.heroku+json; version=3" \
+      })
+    parsed_account_response = JSON.parse(@account_info_response.body)
+
+    #
+    # Email Mike & Jack.
+    #
+    if ENV.has_key?('SENDGRID_USERNAME') && ENV.has_key?('SENDGRID_PASSWORD')
+      client = SendGrid::Client.new(api_user: ENV['SENDGRID_USERNAME'], api_key: ENV['SENDGRID_PASSWORD'])
+      mail = SendGrid::Mail.new(
+        to: 'jack@codeforamerica.org',
+        cc: 'mike@codeforamerica.org',
+        from: 'mike@codeforamerica.org',
+        subject: 'CityVoice got used',
+        text: <<-EOF
+          #{parsed_account_response['email']} at #{@built_app_url}
+          EOF
+      )
     
-    puts client.send(mail)
+      puts client.send(mail)
+    end
     
     erb :response
   end
