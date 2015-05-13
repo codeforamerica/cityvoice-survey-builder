@@ -194,6 +194,7 @@ class CityvoiceBuilderHeroku < Sinatra::Base
     number = CityvoiceTwilioService.new(twilio_sid, twilio_token)
                                    .buy_number_by_locations(locations)
     redis.set("#{params[:user_token]}_number_sid", number.sid)
+    redis.set("#{params[:user_token]}_number_friendly_name", number.friendly_name)
     app_content_set_csv_string = CityvoiceCsvGenerator.app_content_set_csv(number.friendly_name)
     locations_csv_string = CityvoiceCsvGenerator.locations_csv(locations)
     questions_csv_string = CityvoiceCsvGenerator.questions_csv(questions)
@@ -333,6 +334,16 @@ class CityvoiceBuilderHeroku < Sinatra::Base
       puts client.send(mail)
     end
     
+    redis.set("#{params[:state]}_built_app_url", @built_app_url)
+    redirect to("/#{params[:state]}/finished"), 302
+  end
+
+  get '/:user_token/finished' do
+  
+    redis = Redis.new(:url => settings.redis_url)
+    @built_app_url = redis.get("#{params[:user_token]}_built_app_url")
+    @phone_number = redis.get("#{params[:user_token]}_number_friendly_name")
+  
     erb :response
   end
 

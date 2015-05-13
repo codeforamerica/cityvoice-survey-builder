@@ -1,25 +1,16 @@
 <% if @built_app_url %>
-  <h2>Connect phone number</h2>
-  <p>Now that your survey has been published online, you can connect it to your Twilio phone number by following these steps.</p>
-  <ol>
-    <li>
-      <p><a href="https://www.twilio.com/user/account/phone-numbers/incoming" class="button" target="_blank">Go to the Twilio configuration page</a> (opens in new tab) and click on the phone number.</p>
-      <p><img src="/img/twilio-numbers-page.png"></p>
-    </li>
+  <h2>Done!</h2>
+  <p>Your survey has been published online, with this phone number:</p>
+  <h1><%= @phone_number %></h1>
 
-    <li>
-      <p>Copy and paste <strong><%= @built_app_url %>/calls</strong> into the Voice "Request URL" field and click "Save":</p>
-      <p><img src="/img/twilio-configure-phone-number.png"></p>
-    </li>
-    </ol>
-
-  <h2>Congratulations</h2>
-  <p>In about 5 minutes, you can now call your Twilio phone number to try out your new CityVoice survey.</p>
+  <p>In about 5 minutes, you will be able to call your Twilio phone number to try out your new CityVoice survey.</p>
   <p>When asked for a call-in code, use "<em>001</em>" to try it out. (001 is the first location.)</p>
   <p>Lastly, your CityVoice survey web site will soon be available at:</p>
   <p><a href="<%= @built_app_url %>" target="_blank"><%= @built_app_url %></a></p>
+  <p>Change app settings using the Heroku dashboard:</p>
+  <p><a href="https://dashboard.heroku.com/apps" target="_blank">https://dashboard.heroku.com/apps</a></p>
   </p>
 
 <% else %>
-  <p>Uh oh! Something went wrong. We've logged the problem, but please email <a href="mailto:dave@codeforamerica.org">dave@codeforamerica.org</a> to get help.</p>
+  <p>Uh oh! Something went wrong. We've logged the problem, but please email <a href="mailto:jack@codeforamerica.org">jack@codeforamerica.org</a> to get help.</p>
 <% end %>
