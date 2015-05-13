@@ -12,6 +12,12 @@
 - Set `REDISTOGO_URL` to redis://localhost:6379 (or whatever your local connection is)
 - Run the app with `bundle exec rackup` and open your browser to http://localhost:9292
 
+## Testing
+
+Test the builder with [RSpec](http://rspec.info) and a few fake environment variables:
+
+    env HEROKU_OAUTH_ID=- HEROKU_OAUTH_SECRET=- REDISTOGO_URL=- rspec spec
+
 ## Deployment
 
 Non-CFA users shouldn't need to deploy this, but for documentation purposes, here goes!

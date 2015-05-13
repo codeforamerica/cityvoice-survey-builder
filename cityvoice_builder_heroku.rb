@@ -4,7 +4,10 @@ require 'json'
 require 'redis'
 require 'securerandom'
 require 'fileutils'
+require 'twilio-ruby'
+require 'sendgrid-ruby'
 require File.expand_path('../lib/cityvoice_csv_generator', __FILE__)
+require File.expand_path('../lib/cityvoice_twilio_service', __FILE__)
 
 class CityvoiceBuilderHeroku < Sinatra::Base
   raise "Need to set HEROKU_OAUTH_ID" unless ENV.has_key?('HEROKU_OAUTH_ID')
@@ -168,10 +171,30 @@ class CityvoiceBuilderHeroku < Sinatra::Base
   get '/:user_token/tarball/build' do
     token = params[:user_token]
     redis = Redis.new(:url => settings.redis_url)
-    # Get JSON data out of Redis
-    # Parse JSON from Redis into Ruby hashes
+
+    #
+    # After locations, questions, and audio, but before
+    # pushing build to Heroku, add phone number selection.
+    #
+    # Use average lat/lon and IncomingPhoneNumbers to find local numbers,
+    # and display a list for people to choose from. They may have feelings
+    # about the right area code to use:
+    #
+    #   https://github.com/codeforamerica/cityvoice-survey-builder/issues/61#issuecomment-97584397
+    #
+    # After user selects a phone number, reserve it with Twilio:
+    #
+    #   https://github.com/codeforamerica/cityvoice-survey-builder/issues/61#issuecomment-97588226
+    #
+    # Include the phone number in the tarball, if Dave is to be believed.
+    #
     locations = JSON.parse(redis.get("#{params[:user_token]}_locations"))
     questions = JSON.parse(redis.get("#{params[:user_token]}_questions"))
+    twilio_sid, twilio_token = ENV['TWILIO_ACCOUNT_SID'], ENV['TWILIO_AUTH_TOKEN']
+    number = CityvoiceTwilioService.new(twilio_sid, twilio_token)
+                                   .buy_number_by_locations(locations)
+    redis.set("#{params[:user_token]}_number_sid", number.sid)
+    app_content_set_csv_string = CityvoiceCsvGenerator.app_content_set_csv(number.friendly_name)
     locations_csv_string = CityvoiceCsvGenerator.locations_csv(locations)
     questions_csv_string = CityvoiceCsvGenerator.questions_csv(questions)
     # Download latest CityVoice Tarball from GitHub to /tmp
@@ -188,11 +211,16 @@ class CityvoiceBuilderHeroku < Sinatra::Base
     system("tar -zxvf #{tarball_path} -C #{destination_path}")
     path_to_repo = Dir[destination_path + "/*"][0]
     # Delete CSV files in tmp folder
+    app_content_set_csv_path = "#{path_to_repo}/data/app_content_set.csv"
     locations_csv_path = "#{path_to_repo}/data/locations.csv"
     questions_csv_path = "#{path_to_repo}/data/questions.csv"
+    File.delete(app_content_set_csv_path)
     File.delete(locations_csv_path)
     File.delete(questions_csv_path)
     # Write new CSV files in tmp folder
+    File.open(app_content_set_csv_path, 'w') do |file|
+      file.write(app_content_set_csv_string)
+    end
     File.open(locations_csv_path, 'w') do |file|
       file.write(locations_csv_string)
     end
@@ -228,7 +256,7 @@ class CityvoiceBuilderHeroku < Sinatra::Base
     redis.expire("#{token}_tarball", settings.expiration_time)
     redirect to("/#{params[:user_token]}/push"), 302
   end
-
+  
   get '/:user_token/push' do
     @heroku_authorize_url = "https://id.heroku.com/oauth/authorize?" \
       + "client_id=#{ENV['HEROKU_OAUTH_ID']}" \
@@ -261,6 +289,50 @@ class CityvoiceBuilderHeroku < Sinatra::Base
         @built_app_url = "https://#{parsed_response["app"]["name"]}.herokuapp.com"
       end
     end
+    
+    #
+    # After Heroku authorization add phone number configuration
+    # and email to CfA about new signups.
+    #
+    # Use the generated app name to create a voice callback URL and inform Twilio:
+    #
+    #   https://github.com/codeforamerica/cityvoice-survey-builder/issues/61#issuecomment-97589478
+    #
+    redis = Redis.new(:url => settings.redis_url)
+    number_sid = redis.get("#{params[:state]}_number_sid")
+    voice_url = "#{@built_app_url}/calls"
+    twilio_sid, twilio_token = ENV['TWILIO_ACCOUNT_SID'], ENV['TWILIO_AUTH_TOKEN']
+
+    CityvoiceTwilioService.new(twilio_sid, twilio_token)
+                               .set_number_voice_url(number_sid, voice_url)
+    
+    #
+    # Use Heroku account information to inform CfA:
+    #
+    #   https://github.com/codeforamerica/cityvoice-survey-builder/issues/61#issuecomment-97606058
+    #
+    @account_info_response = HTTParty.get("https://api.heroku.com/account", \
+      headers: { \
+        "Authorization" => "Bearer #{@token_exchange_response["access_token"]}", \
+        "Accept" => "application/vnd.heroku+json; version=3" \
+      })
+    parsed_account_response = JSON.parse(@account_info_response.body)
+
+    if ENV.has_key?('SENDGRID_USERNAME') && ENV.has_key?('SENDGRID_PASSWORD')
+      client = SendGrid::Client.new(api_user: ENV['SENDGRID_USERNAME'], api_key: ENV['SENDGRID_PASSWORD'])
+      mail = SendGrid::Mail.new(
+        to: 'jack@codeforamerica.org',
+        cc: 'mike@codeforamerica.org',
+        from: 'mike@codeforamerica.org',
+        subject: 'CityVoice got used',
+        text: <<-EOF
+          #{parsed_account_response['email']} at #{@built_app_url}
+          EOF
+      )
+    
+      puts client.send(mail)
+    end
+    
     erb :response
   end
 
