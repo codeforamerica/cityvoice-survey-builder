@@ -322,7 +322,7 @@ class CityvoiceBuilderHeroku < Sinatra::Base
     if ENV.has_key?('SENDGRID_USERNAME') && ENV.has_key?('SENDGRID_PASSWORD')
       client = SendGrid::Client.new(api_user: ENV['SENDGRID_USERNAME'], api_key: ENV['SENDGRID_PASSWORD'])
       mail = SendGrid::Mail.new(
-        to: 'jack@codeforamerica.org',
+        to: 'cityvoice-support@codeforamerica.org',
         cc: 'mike@codeforamerica.org',
         from: 'mike@codeforamerica.org',
         subject: 'CityVoice got used',
