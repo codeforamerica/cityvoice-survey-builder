@@ -1,21 +1,24 @@
 <h2>Add Questions</h2>
 
 <form name="input" action="questions" method="post">
-  <p>You can ask up to 5 questions in your survey.</p>
-  <p>This is how the questions will look when you're done:</p>
-  <img src="/img/question-screenshot.png">
+  <p>You can ask <strong>up to 5 questions</strong> in your survey.</p>
+
+<h3>Agree/Disagree Questions</h3>
   <p>The first 4 questions must be answerable with simply "Agree" or "Disagree".</p>
-  <p>Give each of these questions a title, followed by the question you're asking. </p>
-  <h3 class="layout-minim">Question Title</h3>
+  <p>Give each of your agree/disagree questions a topic, followed by the text of the question you're asking. </p>
+  <h3 class="layout-minim">Question Topic</h3>
   <h3 class="layout-minim">Question Text</h3>
-      <input type="text" name="questions[agree_questions][][short_name]" class="short_name" placeholder="Property Outcome" required>
-      <input type="text" name="questions[agree_questions][][question_text]" class="question_text" placeholder="Do you think this property should be demolished?" required>
+      <input type="text" name="questions[agree_questions][][short_name]" class="short_name" placeholder="Public Transit" required>
+      <input type="text" name="questions[agree_questions][][question_text]" class="question_text" placeholder="Do you think we should add a bus stop in this location?" required>
     <% 3.times do %>
-        <input type="text" name="questions[agree_questions][][short_name]" class="input short_name" placeholder="Property Outcome">
-        <input type="text" name="questions[agree_questions][][question_text]" class="input question_text" placeholder="Do you think this property should be demolished?">
+        <input type="text" name="questions[agree_questions][][short_name]" class="input short_name" placeholder="Public Transit">
+        <input type="text" name="questions[agree_questions][][question_text]" class="input question_text" placeholder="Do you think we should add a bus stop in this location?">
     <% end %>
+    <h3>Open Ended Question</h3>
       <p>The last question is open ended, for a user to leave a voice message.</p>
-      <input type="text" name="questions[voice_question_text]" class="question_text" placeholder="What would make this park better?" required>
+      <input type="text" name="questions[voice_question_text]" class="question_text" placeholder="What do you thnk would make this park better?" required>
       <br><br>
+       <p>Here's an example of how your questions will look when you're done:</p>
+  <img src="/img/question-screenshot.png">
   <input type="submit" value="Next step">
 </form>
