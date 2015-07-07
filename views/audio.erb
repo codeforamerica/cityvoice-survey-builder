@@ -28,7 +28,7 @@
 <div id="postrecordingdiv">
   <div id="recordingslist"></div>
   <button id="uploadButton" onclick="uploadAudio(this);" disabled>Upload</button>
-  <button class="button-prominent" id="rerecordButton" onclick="location.reload();" disabled>Re-record</button>
+  <button class="button-prominent" id="rerecordButton" onclick="reRecordAudio();" disabled>Re-record</button>
 </div>
 
 <div id="postuploaddiv">
@@ -121,6 +121,20 @@ function createPlayer() {
   });
 }
 
+// Reload the page while stashing the content of the textarea in the query string.
+function reRecordAudio()
+{
+  var textareas = document.getElementsByTagName('textarea');
+  
+  if(textareas.length == 1) {
+    var hash = '#' + escape(textareas[0].value);
+    var parts = [location.protocol, '//', location.hostname, location.pathname, hash];
+    location.href = parts.join('');
+    location.reload();
+  }
+  return false;
+}
+
 window.onload = function init() {
   try {
     // webkit shim
@@ -141,6 +155,14 @@ window.onload = function init() {
   navigator.getUserMedia({audio: true}, startUserMedia, function(e) {
     __log('No live audio input: ' + e);
   });
+  
+  // Set textarea content to location hash.
+  var textareas = document.getElementsByTagName('textarea');
+  
+  if(textareas.length == 1) {
+    var content = unescape(location.hash.substring(1));
+    textareas[0].value = content;
+  }
 };
 </script>
 
