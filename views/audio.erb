@@ -15,12 +15,12 @@
 
 <h2>Record audio for: "<%= @current_audio_name %>"</h2>
 <p><%= @current_audio_description %></p>
-<label>Script (this is just a suggestion, you can edit the text)</label>
+<label>Sample Script: Create your own</label>
 <textarea><%= @current_audio_example %></textarea>
 <br><br>
 
 <div id="prerecordingdiv">
-  <p id="recordmessage">When you're happy with your script, press record and start speaking.</p>
+  <p id="recordmessage">When you're happy with your script, click to record and start speaking immediately.</p>
   <button id="recordButton" onclick="startRecording(this);" disabled>Record</button>
   <button class="button-prominent" onclick="stopRecording(this);" disabled>Stop</button>
 </div>
