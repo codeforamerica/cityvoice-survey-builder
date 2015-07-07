@@ -24,19 +24,19 @@ class CityvoiceBuilderHeroku < Sinatra::Base
     # redis.ttl("keyname") # returns remaining seconds for life of keyname
     set :audio_info, {
       "welcome" => {
-        "description" => "The first message played to a caller, giving context for the survey",
-        "example" => "Hi, thanks for calling! Your feedback will help us [GOAL]."
+        "description" => "Use this message to give participants context for the purpose of the survey",
+        "example" => "Hi, thanks for calling! Your feedback will help [INSERT SURVEY GOAL]."
       },
       "consent" => {
-        "description" => "Asks the caller for consent to be called back",
-        "example" => "Do you want to make your phone number available for follow-up to this survey? For yes, press 1. For no, press 2."
+        "description" => "This message asks the caller if they’re open to being called back for follow-up discussion",
+        "example" => "Would you like to make your phone number available for a follow-up to this survey? For yes, press 1. For no, press 2."
       },
       "fatal_error" => {
-        "description" => "An error message played when the user has made an error multiple times (ending the call)",
-        "example" => "Sorry! We're having problems understanding your input. If you'd like a different way to contact us [TELL THEM ANOTHER WAY TO CONTACT YOU]."
+        "description" => "Just in case we have trouble hearing the caller, we’d like to include an error message recording. This message would be triggered if a caller makes an error several times in a row, ending the call.",
+        "example" => "Sorry! We're having trouble recording your input. If you'd like a different way to contact us [INSERT ALTERNATE WAY TO CONTACT YOU]."
       },
       "thanks" => {
-        "description" => "The final message played, after the survey is done",
+        "description" => "Use this message to thank the caller and tell them why their participation matters",
         "example" => "Thanks! Your feedback will help us [GOAL]. If you would like to get involved in [SURVEY TOPIC], please [MORE CONTACT INFO]."
       },
     }
