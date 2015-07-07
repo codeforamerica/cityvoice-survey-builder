@@ -16,7 +16,7 @@ class CityvoiceBuilderHeroku < Sinatra::Base
 
   configure do
     set :redis_url, URI.parse(ENV["REDISTOGO_URL"])
-    set :expiration_time, 1800
+    set :expiration_time, 43200 # 12 hours ought to be enough for anybody
     # Usage:
     # redis.set("keyname", "value")
     # redis.get("keyname")
