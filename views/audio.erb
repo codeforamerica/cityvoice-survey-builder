@@ -163,7 +163,11 @@ window.onload = function init() {
     var content = unescape(location.hash.substring(1));
     var parts = [location.protocol, '//', location.hostname, location.pathname, '#'];
     location.href = parts.join('');
-    textareas[0].value = content;
+    
+    if(content)
+    {
+        textareas[0].value = content;
+    }
   }
 };
 </script>
