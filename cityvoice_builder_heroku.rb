@@ -66,24 +66,24 @@ class CityvoiceBuilderHeroku < Sinatra::Base
     key_for_locations = "#{params[:user_token]}_locations"
     redis.set(key_for_locations, params[:locations].to_json)
     redis.expire(key_for_locations, settings.expiration_time)
-    redirect to("/#{params[:user_token]}/questions"), 303
-    # For eventual location name-editing
-    #redirect to('/locations/edit'), 303
+    redirect to("/#{params[:user_token]}/locations/edit"), 303
   end
 
-# No location name editing in v1, but backend work done here
-=begin
-  get '/locations/edit' do
+  get '/:user_token/locations/edit' do
+    redis = Redis.new(:url => settings.redis_url)
     @page_name = 'locations'
-    @locations = JSON.parse(session[:locations])
+    key_for_locations = "#{params[:user_token]}_locations"
+    @locations = JSON.parse(redis.get(key_for_locations))
     erb :locations_edit
   end
 
-  post '/locations/edit' do
-    session[:locations] = params[:locations].to_json
-    redirect to('/questions')
+  post '/:user_token/locations/edit' do
+    redis = Redis.new(:url => settings.redis_url)
+    key_for_locations = "#{params[:user_token]}_locations"
+    redis.set(key_for_locations, params[:locations].to_json)
+    redis.expire(key_for_locations, settings.expiration_time)
+    redirect to("/#{params[:user_token]}/questions")
   end
-=end
 
   get '/:user_token/questions' do
     @page_name = 'questions'
