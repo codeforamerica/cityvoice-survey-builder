@@ -26,12 +26,13 @@
     }
 
     function geocodeAddress() {
-      var address = document.getElementById('address').value;
+      var loc_name = document.getElementById('loc-name').value,
+          address = document.getElementById('address').value;
       geocoder.geocode( { 'address': address}, function(results, status) {
         if (status == google.maps.GeocoderStatus.OK) {
           topResult = results[0];
           map.setCenter(topResult.geometry.location);
-          addLocation(topResult);
+          addLocation(topResult, loc_name);
           var marker = new google.maps.Marker({
               map: map,
               position: topResult.geometry.location
@@ -47,12 +48,10 @@
       nodeToBeDeleted.parentNode.removeChild(nodeToBeDeleted);
     }
 
-    function addLocation(location) {
+    function addLocation(location, name) {
       locationsFormInputsDiv = document.getElementById('locations-form-inputs');
       lat = location.geometry.location.lat();
       lng = location.geometry.location.lng();
-      // Use the street address as the name
-      name = location.address_components[0].short_name + " " + location.address_components[1].short_name;
       nameInput = '<input name="locations[][name]" type="hidden" value="' + name + '">';
       latInput = '<input name="locations[][lat]" type="hidden" value="' + lat +'">';
       lngInput = '<input name="locations[][lng]" type="hidden" value="' + lng +'">';
@@ -70,10 +69,17 @@
   <h2>Add Locations</h2>
     <p>Add an address for each location you'll be asking questions about. You can add as many as you'd like.</p>
     <div id="locations">
-      <label>Address:</label>
       <div id="panel">
-        <input id="address" type="textbox" value="155 Ninth Street, San Francisco, CA">
+        <label for="loc-name">Location Name:</label>
         <br>
+        <input id="loc-name" type="textbox" value="Code for America">
+      </div>
+      <div id="panel">
+        <label for="address">Address:</label>
+        <br>
+        <input id="address" type="textbox" value="155 Ninth Street, San Francisco, CA">
+      </div>
+      <div id="panel">
         <input type="button" value="Add location" onclick="geocodeAddress()">
       </div>
       <form name="locations" method="post">

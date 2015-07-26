@@ -6,7 +6,7 @@
   width: 400px;
 }
 
-#address {
+#loc-name, #address {
   width: 500px;
 }
 
