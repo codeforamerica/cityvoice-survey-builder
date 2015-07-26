@@ -52,7 +52,6 @@
       locationsFormInputsDiv = document.getElementById('locations-form-inputs');
       lat = location.geometry.location.lat();
       lng = location.geometry.location.lng();
-      // Use the street address as the name
       nameInput = '<input name="locations[][name]" type="hidden" value="' + name + '">';
       latInput = '<input name="locations[][lat]" type="hidden" value="' + lat +'">';
       lngInput = '<input name="locations[][lng]" type="hidden" value="' + lng +'">';
