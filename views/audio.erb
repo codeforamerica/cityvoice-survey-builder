@@ -13,7 +13,13 @@
   <p>To record audio, you must give your browser access to your microphone.</p>
 </div>
 
-<h2>Record audio for: "<%= @current_audio_name %>"</h2>
+<h2>
+<% if @current_audio_name == 'fatal_error' %>
+    Record audio for if something goes wrong
+<% else %>
+    Record audio for: “<%= @current_audio_name %>”
+<% end %>
+</h2>
 <p><%= @current_audio_description %></p>
 <label>Sample Script: Create your own</label>
 <textarea><%= @current_audio_example %></textarea>
