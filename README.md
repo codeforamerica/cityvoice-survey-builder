@@ -28,9 +28,10 @@ There, set the Name (whatever you want) and the OAuth Callback URL (this will be
 
 Once you've done that, note the 'ID' and 'SECRET' it gives you.
 
-Now, clone this repo and `cd` into the folder. From there, create a Heroku app with your own name:
+Now, clone this repo and `cd` into the folder. From there, create a Heroku app with
+your own name and the [multi buildpack](https://github.com/ddollar/heroku-buildpack-multi):
 
-    $ heroku create my-cityvoice-builder-name
+    $ heroku create --buildpack https://github.com/ddollar/heroku-buildpack-multi.git my-cityvoice-builder-name
 
 Now, configure your Builder app with the ID and SECRET from above:
 
