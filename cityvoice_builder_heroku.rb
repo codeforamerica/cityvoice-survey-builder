@@ -15,6 +15,7 @@ class CityvoiceBuilderHeroku < Sinatra::Base
   enable :sessions
 
   configure do
+    set :force_ssl, true
     set :redis_url, URI.parse(ENV["REDISTOGO_URL"])
     set :expiration_time, 43200 # 12 hours ought to be enough for anybody
     # Usage:
@@ -42,6 +43,12 @@ class CityvoiceBuilderHeroku < Sinatra::Base
     }
   end
 
+  before do
+    if settings.force_ssl && !request.secure?
+      redirect to("https://#{request.host}#{request.path}?#{request.query_string}")
+    end
+  end
+  
   get '/' do
     erb :index
   end
