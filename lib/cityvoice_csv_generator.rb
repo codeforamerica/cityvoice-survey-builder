@@ -23,7 +23,7 @@ module CityvoiceCsvGenerator
   def self.app_content_set_csv(phone_number)
     csv_string = CSV.generate do |csv|
       csv << ["Issue", "App Phone Number", "Message From", "Message URL", "Header Color", "Short Title", "Call In Code Digits", "Feedback Form URL"]
-      csv << ["CityVoice", phone_number, "CityVoice Maintainers", "/assets/welcome.mp3", "#6DC6AD", "CityVoice", "3", "http://example.com"]
+      csv << ["CityVoice", phone_number, "CityVoice Maintainers", "/assets/welcome.mp3", "#6DC6AD", "CityVoice", "3", "https://docs.google.com/a/codeforamerica.org/forms/d/1CD4FyRCHh5C7g44ueINFtqM9Ulv1c3krhRn9COIUwgA/viewform"]
     end
     csv_string
   end
