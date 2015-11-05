@@ -270,10 +270,10 @@ class CityvoiceBuilderHeroku < Sinatra::Base
     @app_build_response = HTTParty.post("https://api.heroku.com/app-setups", \
       headers: { \
         "Authorization" => "Bearer #{@token_exchange_response["access_token"]}", \
-        "Accept" => "application/vnd.heroku+json; version=edge", \
+        "Accept" => "application/vnd.heroku+json; version=3", \
         "Content-Type" => "application/json" \
       }, \
-      body: "{\"source_blob\": { \"url\": \"#{tarball_url}\"}, \"app\": { \"stack\": \"cedar\" } }")
+      body: "{\"source_blob\": { \"url\": \"#{tarball_url}\"}, \"app\": { \"stack\": \"cedar-14\" } }")
     parsed_response = JSON.parse(@app_build_response.body)
     @built_app_url = nil
     if parsed_response["app"]
