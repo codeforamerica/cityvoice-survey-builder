@@ -22,7 +22,7 @@ Test the builder with [RSpec](http://rspec.info) and a few fake environment vari
 
 Non-CFA users shouldn't need to deploy this, but for documentation purposes, here goes!
 
-First, go to [your account page on Heroku](https://dashboard.heroku.com/account) and under 'API Clients' click the 'Register API Client' button.
+First, go to [your account page on Heroku](https://dashboard.heroku.com/account/applications) and under 'API Clients' click the 'Register API Client' button.
 
 There, set the Name (whatever you want) and the OAuth Callback URL (this will be /callback on your deployment, for example: https://my-cityvoice-builder-instance.herokuapp.com/callback )
 
