@@ -3,7 +3,7 @@
 ## Running Locally
 
 - Clone the repo
-- Install Ruby 2.1.1 if not already installed (with rvm, `rvm install 2.1.1`)
+- Install Ruby 2.2.2 if not already installed (with rvm, `rvm install 2.2.2`)
 - Install dependencies with `bundle install`
 - Set dummy environment variables:
  - `HEROKU_OAUTH_ID`
@@ -49,4 +49,3 @@ Lastly, provision Heroku's RedisToGo add-on:
 (Details and pricing [$39/mo for the small add-on shown above] can be found at: https://addons.heroku.com/RedisToGo )
 
 Copyright Code for America Labs 2014, MIT License
-
