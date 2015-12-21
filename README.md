@@ -14,9 +14,9 @@
 
 ## Testing
 
-Test the builder with [RSpec](http://rspec.info) and a few fake environment variables:
+Test the builder with [RSpec](http://rspec.info):
 
-    env HEROKU_OAUTH_ID=- HEROKU_OAUTH_SECRET=- REDISTOGO_URL=- rspec spec
+    rspec
 
 ## Deployment
 

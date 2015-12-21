@@ -10,13 +10,17 @@ require File.expand_path('../lib/cityvoice_csv_generator', __FILE__)
 require File.expand_path('../lib/cityvoice_twilio_service', __FILE__)
 
 class CityvoiceBuilderHeroku < Sinatra::Base
-  raise "Need to set HEROKU_OAUTH_ID" unless ENV.has_key?('HEROKU_OAUTH_ID')
-  raise "Need to set HEROKU_OAUTH_SECRET" unless ENV.has_key?('HEROKU_OAUTH_SECRET')
+
+  if ENV['RACK_ENV'] != 'test'
+    raise "Need to set HEROKU_OAUTH_ID" unless ENV.has_key?('HEROKU_OAUTH_ID')
+    raise "Need to set HEROKU_OAUTH_SECRET" unless ENV.has_key?('HEROKU_OAUTH_SECRET')
+  end
+
   enable :sessions
 
   configure do
     set :force_ssl, true
-    set :redis_url, URI.parse(ENV["REDISTOGO_URL"])
+    set :redis_url, URI.parse(ENV["REDISTOGO_URL"] || 'fake-redis-url')
     set :expiration_time, 43200 # 12 hours ought to be enough for anybody
     # Usage:
     # redis.set("keyname", "value")
@@ -48,7 +52,7 @@ class CityvoiceBuilderHeroku < Sinatra::Base
       redirect to("https://#{request.host}#{request.path}?#{request.query_string}")
     end
   end
-  
+
   get '/' do
     erb :index
   end
@@ -248,7 +252,7 @@ class CityvoiceBuilderHeroku < Sinatra::Base
     redis.expire("#{token}_tarball", settings.expiration_time)
     redirect to("/#{params[:user_token]}/push"), 302
   end
-  
+
   get '/:user_token/push' do
     @heroku_authorize_url = "https://id.heroku.com/oauth/authorize?" \
       + "client_id=#{ENV['HEROKU_OAUTH_ID']}" \
@@ -281,7 +285,7 @@ class CityvoiceBuilderHeroku < Sinatra::Base
         @built_app_url = "https://#{parsed_response["app"]["name"]}.herokuapp.com"
       end
     end
-    
+
     #
     # After Heroku authorization add phone number configuration
     # and email to CfA about new signups.
@@ -297,7 +301,7 @@ class CityvoiceBuilderHeroku < Sinatra::Base
 
     CityvoiceTwilioService.new(twilio_sid, twilio_token)
                                .set_number_voice_url(number_sid, voice_url)
-    
+
     #
     # Use Heroku account information to inform CfA:
     #
@@ -321,20 +325,20 @@ class CityvoiceBuilderHeroku < Sinatra::Base
           #{parsed_account_response['email']} at #{@built_app_url}
           EOF
       )
-    
+
       puts client.send(mail)
     end
-    
+
     redis.set("#{params[:state]}_built_app_url", @built_app_url)
     redirect to("/#{params[:state]}/finished"), 302
   end
 
   get '/:user_token/finished' do
-  
+
     redis = Redis.new(:url => settings.redis_url)
     @built_app_url = redis.get("#{params[:user_token]}_built_app_url")
     @phone_number = redis.get("#{params[:user_token]}_number_friendly_name")
-  
+
     erb :response
   end
 
